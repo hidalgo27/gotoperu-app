@@ -15,8 +15,14 @@ use Illuminate\Http\Request;
 class PageController extends Controller
 {
     public function packages(){
-        $paquetes = TPaquete::where('estado', 1)->get();
-        return (compact('paquetes'));
+        try {
+            $paquetes = TPaquete::where('estado', 1)->get();
+            return (compact('paquetes'));
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
     }
     public function destinations(){
         $destinos = TDestino::latest()->take(3)->get();
