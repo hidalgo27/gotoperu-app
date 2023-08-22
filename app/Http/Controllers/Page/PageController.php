@@ -17,7 +17,7 @@ class PageController extends Controller
     public function packages(){
         try {
             $paquetes = TPaquete::where('estado', 1)->get();
-            return (compact('paquetes'));
+            return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;

@@ -19,5 +19,5 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //});
 
-Route::get('/packages', [PageController::class, 'packages'])->name('package');
+/*Route::get('/packages', [PageController::class, 'packages'])->name('package');*/
 Route::get('/destinations', [PageController::class, 'destinations'])->name('destination');
