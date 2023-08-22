@@ -20,4 +20,4 @@ use Illuminate\Support\Facades\Route;
 //});
 
 /*Route::get('/packages', [PageController::class, 'packages'])->name('package');*/
-Route::get('/destinations', [PageController::class, 'destinations'])->name('destination');
+/*Route::get('/destinations', [PageController::class, 'destinations'])->name('destination');*/
