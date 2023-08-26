@@ -46,22 +46,24 @@ class PageController extends Controller
         return (compact('destinos'));
     }
     public function packages_detail(TPaquete $paquete) {
-
-        $paquete = $paquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->get();
         try {
-            $testinomials = TTestimonio::all();
-            $testinomials_r = TTestimonio::inRandomOrder()->limit(1)->get();
-            $category = TCategoria::all();
-
-            $hoteles = THotel::with('hotel_destinos.destinos')->get();
-
-            return response()->json([$paquete, $hoteles], 200);
+            $paquete = $paquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->get();
+            return response()->json([$paquete], 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
         }
 
+    }
 
+    public function hotels_destinations() {
+        try {
+            $hoteles = THotel::with('hotel_destinos.destinos')->get();
+            return response()->json([$hoteles], 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
 
     }
 }
