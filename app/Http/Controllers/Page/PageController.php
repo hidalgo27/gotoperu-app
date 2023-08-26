@@ -48,7 +48,7 @@ class PageController extends Controller
     public function packages_detail(TPaquete $paquete) {
         try {
             $paquete = $paquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->get();
-            return response()->json([$paquete], 200);
+            return response()->json($paquete, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
@@ -59,7 +59,7 @@ class PageController extends Controller
     public function hotels_destinations() {
         try {
             $hoteles = THotel::with('hotel_destinos.destinos')->get();
-            return response()->json([$hoteles], 200);
+            return response()->json($hoteles, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
