@@ -45,10 +45,10 @@ class PageController extends Controller
         $destinos = TDestino::latest()->take(3)->get();
         return (compact('destinos'));
     }
-    public function packages_detail(TPaquete $paquete) {
+    public function packages_detail($url) {
         try {
-            $paquete = $paquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->get();
-            return response()->json($paquete, 200);
+            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->where('url', $url)->get();
+            return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
