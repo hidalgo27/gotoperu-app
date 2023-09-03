@@ -24,3 +24,4 @@ Route::get('destinations', [PageController::class, 'destinations'])->name('desti
 Route::get('hotels-destinations', [PageController::class, 'hotels_destinations'])->name('hotels');
 
 Route::get('latam-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
+Route::get('team', [PageController::class, 'team'])->name('team');

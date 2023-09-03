@@ -8,7 +8,7 @@ class TPaqueteCategoria extends Model
 {
     protected $table = "tpaquetescategoria";
 
-    public function paquete()
+    public function paquetes()
     {
         return $this->belongsTo(TPaquete::class, 'idpaquetes');
     }

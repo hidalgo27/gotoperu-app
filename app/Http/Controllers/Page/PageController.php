@@ -66,4 +66,15 @@ class PageController extends Controller
         }
 
     }
+
+    public function team(){
+        try {
+            $team = TTeam::all();
+            return response()->json($team, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
 }

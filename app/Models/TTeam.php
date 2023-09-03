@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TTestimonio extends Model
+class TTeam extends Model
 {
-    protected $table = "ttestimonios";
+    protected $table = "tteam";
+    //
 }

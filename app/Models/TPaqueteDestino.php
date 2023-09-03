@@ -13,7 +13,7 @@ class TPaqueteDestino extends Model
         return $this->belongsTo(TPaquete::class, 'idpaquetes');
     }
 
-    public function destinos()
+        public function destinos()
     {
         return $this->belongsTo(TDestino::class, 'iddestinos');
     }

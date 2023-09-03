@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class THotelDestino extends Model
+class TTourDestino extends Model
 {
-    protected $table = "thoteldestino";
-    public function hotel()
+    protected $table = "ttoursdestino";
+
+    public function tours()
     {
-        return $this->belongsTo(THotel::class, 'idhotel');
+        return $this->belongsTo(TTour::class, 'idtours');
     }
 
     public function destinos()
