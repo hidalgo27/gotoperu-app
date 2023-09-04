@@ -9,8 +9,10 @@ use App\Models\THotel;
 use App\Models\THotelDestino;
 use App\Models\TPais;
 use App\Models\TPaquete;
+use App\Models\TPaqueteDestino;
 use App\Models\TTeam;
 use App\Models\TTestimonio;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,10 +43,7 @@ class PageController extends Controller
         }
 
     }
-    public function destinations(){
-        $destinos = TDestino::latest()->take(3)->get();
-        return (compact('destinos'));
-    }
+
     public function packages_detail($url) {
         try {
             $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->where('url', $url)->get();
@@ -77,4 +76,30 @@ class PageController extends Controller
         }
 
     }
+    public function pais(){
+        try {
+            $pais = TPais::all();
+            return response()->json($pais, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function destinations(TPais $pais){
+
+        try {
+            $paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.destino_pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
+
+            $paquetes_show = $paquetes_de->where('destinos', '!=', null)->unique('idpaquetes');
+
+            return response()->json($paquetes_show, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
 }
