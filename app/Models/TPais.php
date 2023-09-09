@@ -16,8 +16,13 @@ class TPais extends Model
         return "url";
     }
 
-    public function destinos()
+   /* public function destinos()
     {
         return $this->belongsTo(TPais::class, 'idpais');
+    }*/
+
+    public function destino()
+    {
+        return $this->hasMany(TDestino::class, 'idpais');
     }
 }

@@ -21,7 +21,7 @@ class PageController extends Controller
     public function packages(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.destino_pais', 'precio_paquetes')
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes')
                 ->where('estado', '1')
                 ->get();
             /*$paquetes = TPaquete::where('estado', 1)->get();*/
@@ -46,7 +46,7 @@ class PageController extends Controller
 
     public function packages_detail($url) {
         try {
-            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.destino_pais', 'precio_paquetes')->where('url', $url)->get();
+            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.pais', 'precio_paquetes')->where('url', $url)->get();
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -78,7 +78,7 @@ class PageController extends Controller
     }
     public function pais(){
         try {
-            $pais = TPais::all();
+            $pais = TPais::with('destino')->get();
             return response()->json($pais, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -90,7 +90,7 @@ class PageController extends Controller
     public function destinations(TPais $pais){
 
         try {
-            $paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.destino_pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
+            $paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
 
             $paquetes_show = $paquetes_de->where('destinos', '!=', null)->unique('idpaquetes');
 
