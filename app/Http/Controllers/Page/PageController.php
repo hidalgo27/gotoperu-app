@@ -18,11 +18,36 @@ use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
-    public function packages(){
+    public function packages_top(){
         try {
             $paquetes = TPaquete::
             with('paquetes_destinos.destinos.pais', 'precio_paquetes')
                 ->where('estado', '1')
+                ->get();
+            /*$paquetes = TPaquete::where('estado', 1)->get();*/
+
+            /*$pais2 = TPais::all();*/
+
+            $paquetes_api = DB::table('tpaquetesdestinos')
+                ->join('tdestinos', 'tpaquetesdestinos.iddestinos', '=', 'tdestinos.id')
+                ->select('idpaquetes', 'idpais')
+                ->groupByRaw('idpaquetes, idpais')
+                ->get();
+            $paquetes_api = ($paquetes_api->groupBy('idpaquetes'));
+
+            /*dd($paquetes_api);*/
+            return response()->json($paquetes, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+    public function packages_offers(){
+        try {
+            $paquetes = TPaquete::
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes')
+                ->where('offers_home', '1')
                 ->get();
             /*$paquetes = TPaquete::where('estado', 1)->get();*/
 
@@ -90,11 +115,34 @@ class PageController extends Controller
     public function destinations(TPais $pais){
 
         try {
-            $paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
+            /*$paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
 
-            $paquetes_show = $paquetes_de->where('destinos', '!=', null)->unique('idpaquetes');
+            $paquetes_show = $paquetes_de->where('destinos', '!=', null)->unique('idpaquetes');*/
 
-            return response()->json($paquetes_show, 200);
+            $paquetes_api = DB::table('tpaquetesdestinos')
+                ->join('tdestinos', 'tpaquetesdestinos.iddestinos', '=', 'tdestinos.id')
+//            ->select('idpais', DB::raw('count(*) as user_count'))
+////            ->count('idpais')
+/// ->join('tdestinos', 'tpaquetesdestinos.iddestinos', '=', 'tdestinos.id')
+                ->select('idpaquetes', 'idpais')
+                ->groupByRaw('idpaquetes, idpais')
+//                ->select('idpaquetes', 'idpais',DB::raw('count(idpaquetes) as user_count'))
+//            ->toArray();
+//            ->select('idpaquetes', 'user_count')
+//                ->groupByRaw('idpaquetes, user_count')
+                ->get();
+
+
+//        $paquetes_api = $paquetes_api
+//            ->select(DB::raw('count(idpaquetes) as user_count'))
+//            ->groupBy('idpaquetes')
+//            ->get()
+//        ;
+
+
+            $paquetes_api = ($paquetes_api->groupBy('idpaquetes'));
+
+            return response()->json($paquetes_api, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;

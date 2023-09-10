@@ -19,7 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('packages', [PageController::class, 'packages'])->name('package');
+Route::get('packages-top', [PageController::class, 'packages_top'])->name('package.top');
+Route::get('packages-offers', [PageController::class, 'packages_offers'])->name('package.offers');
 Route::get('hotels-destinations', [PageController::class, 'hotels_destinations'])->name('hotels');
 
 Route::get('latam-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
