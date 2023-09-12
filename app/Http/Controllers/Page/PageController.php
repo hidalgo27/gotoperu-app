@@ -80,8 +80,9 @@ class PageController extends Controller
 
     public function team(){
         try {
-            $team = TTeam::all();
-            return response()->json($team, 200);
+            $team = TTeam::orderBy('id', 'desc')->get();
+
+            return response()->json($team);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
