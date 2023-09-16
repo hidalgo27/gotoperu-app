@@ -8,7 +8,7 @@
                         <tbody>
                         <tr bgcolor="#ffffff">
                             <td valign="top" style="padding:10px 35px 0 35px;color:#ffffff">
-                                <img class="CToWUd" width="350" alt="logo gotoperu" src="{{asset('images/logo-gotoperu-ave.png')}}" style="vertical-align:top;max-width:220px">
+                                <img class="CToWUd" width="350" alt="logo gotoperu" src="https://gotolatam.travel/images/logos/logo-gotolatam.svg" style="vertical-align:top;max-width:220px;margin: 0 auto">
                             </td>
 
                         </tr>
@@ -25,12 +25,9 @@
             <tr>
                 <td style="text-align:center;font-size:12px;padding:5px 15px;color:#999999">
                     <p>
-                        LAS MEJORES VACACIONES EN PERÚ CON EL MEJOR OPERADOR PERUANO
+                        THE BEST HOLIDAYS IN PERU WITH THE BEST OPERATOR IN LATAM
                     </p>
-                    <p><a href="http://gotoperu.com.mx/" style="color:blue" target="_blank">GotoPeru</a></p>
-                </td>
-                <td>
-                    <img class="CToWUd" width="250" alt="logo gotoperu" src="{{asset('images/logo-gotoperu-ave.png')}}" style="vertical-align:top;max-width:220px">
+                    <p><a href="https://gotolatam.travel/" style="color:#f9a825; font-weight: bold" target="_blank">GOTOLATAM</a></p>
                 </td>
             </tr>
             </tbody>

@@ -145,7 +145,7 @@ class PageController extends Controller
     {
 
 
-        $from = 'mexico@gotoperu.com';
+        $from = 'info@gotolatam.travel';
 
         $category_all = '';
         if ($request->category_d){
@@ -200,19 +200,19 @@ class PageController extends Controller
             $email = $request->el_email;
         }
 
-//        $fecha = '';
-//        if ($request->el_fecha){
-//            $fecha = $request->el_fecha;
-//        }
-
         $fecha = '';
         if ($request->el_fecha){
-            foreach ($request->el_fecha as $date){
-                if (isset($date)){
-                    $fecha.=$date;
-                }
-            }
+            $fecha = $request->el_fecha;
         }
+
+//        $fecha = '';
+//        if ($request->el_fecha){
+//            foreach ($request->el_fecha as $date){
+//                if (isset($date)){
+//                    $fecha.=$date;
+//                }
+//            }
+//        }
 
         $telefono = '';
         if ($request->el_telefono){
@@ -246,9 +246,9 @@ class PageController extends Controller
             try {
                 Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
                     $messaje->to($email, $nombre)
-                        ->subject('GotoPeru')
+                        ->subject('GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('mexico@gotoperu.com', 'GotoPeru');
+                        ->from('info@gotolatam.travel', 'GOTOLATAM');
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'category_all' => $category_all,
@@ -265,11 +265,11 @@ class PageController extends Controller
                     'country' => $country
 
                 ], function ($messaje) use ($from) {
-                    $messaje->to($from, 'GotoPeru')
-                        ->subject('GotoPeru')
-//                    ->cc($from2, 'GotoPeru')
+                    $messaje->to($from, 'GOTOLATAM')
+                        ->subject('GOTOLATAM')
+//                    ->cc($from2, 'GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('mexico@gotoperu.com', 'GotoPeru');
+                        ->from('info@gotolatam.travel', 'GOTOLATAM');
                 });
 
                 return response()->json('Thank you.', 200);
