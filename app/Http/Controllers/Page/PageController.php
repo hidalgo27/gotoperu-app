@@ -272,7 +272,7 @@ class PageController extends Controller
                         ->from('mexico@gotoperu.com', 'GotoPeru');
                 });
 
-                return 'Thank you.';
+                return response()->json('Thank you.', 200);
             }
             catch (Exception $e){
                 return $e;
