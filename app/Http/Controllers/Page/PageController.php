@@ -7,6 +7,7 @@ use App\Models\TCategoria;
 use App\Models\TDestino;
 use App\Models\THotel;
 use App\Models\THotelDestino;
+use App\Models\TInquire;
 use App\Models\TPais;
 use App\Models\TPaquete;
 use App\Models\TPaqueteDestino;
@@ -15,6 +16,7 @@ use App\Models\TTestimonio;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
@@ -134,6 +136,147 @@ class PageController extends Controller
         } catch (\Exception $th) {
             //throw $th;
             return $th;
+        }
+
+    }
+
+
+    public function formulario_diseno(Request $request)
+    {
+
+
+        $from = 'mexico@gotoperu.com';
+
+        $category_all = '';
+        if ($request->category_d){
+            foreach ($request->category_d as $categorias){
+                if (isset($categorias)){
+                    $category_all.=$categorias.',';
+                }
+            }
+        }
+
+        $destination_all = '';
+        if ($request->destino_d){
+            foreach ($request->destino_d as $destinos){
+                if (isset($destinos)){
+                    $destination_all.=$destinos.',';
+                }
+            }
+        }
+
+
+
+//        $travellers_all = '';
+//        if ($request->pasajeros_d){
+//            foreach ($request->pasajeros_d as $pasajeros){
+//                if (isset($pasajeros)){
+//                    $travellers_all.=$pasajeros.',';
+//                }
+//            }
+//        }
+
+        $travellers_all = '';
+        if ($request->pasajeros_d){
+            $travellers_all = $request->pasajeros_d;
+        }
+
+       /* $duration_all = '';
+        if ($request->duracion_d){
+            foreach ($request->duracion_d as $duracion){
+                if (isset($duracion)){
+                    $duration_all.=$duracion.',';
+                }
+            }
+        }*/
+
+        $nombre = '';
+        if ($request->el_nombre){
+            $nombre = $request->el_nombre;
+        }
+
+        $email = '';
+        if ($request->el_email){
+            $email = $request->el_email;
+        }
+
+//        $fecha = '';
+//        if ($request->el_fecha){
+//            $fecha = $request->el_fecha;
+//        }
+
+        $fecha = '';
+        if ($request->el_fecha){
+            foreach ($request->el_fecha as $date){
+                if (isset($date)){
+                    $fecha.=$date;
+                }
+            }
+        }
+
+        $telefono = '';
+        if ($request->el_telefono){
+            $telefono = $request->el_telefono;
+        }
+
+        $country = '';
+        if ($request->country){
+            $country = $request->country;
+        }
+
+
+        $comentario = '';
+        if ($request->el_textarea){
+            $comentario = $request->el_textarea;
+        }
+
+//        $inquire = new TInquire();
+//        $inquire->hotel = $category_all;
+//        $inquire->destinos = $destination_all;
+//        $inquire->pasajeros = $travellers_all;
+////        $inquire->duracion = $duration_all;
+//        $inquire->nombre = $nombre;
+//        $inquire->email = $email;
+//        $inquire->fecha = $fecha;
+//        $inquire->telefono = $telefono;
+//        $inquire->comentario = $comentario;
+//        $inquire->save();
+
+        if ($email){
+            try {
+                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
+                    $messaje->to($email, $nombre)
+                        ->subject('GotoPeru')
+                        /*->attach('ruta')*/
+                        ->from('mexico@gotoperu.com', 'GotoPeru');
+                });
+                Mail::send(['html' => 'notifications.page.admin-form-contact'], [
+                    'category_all' => $category_all,
+                    'destination_all' => $destination_all,
+                    'travellers_all' => $travellers_all,
+//                    'duration_all' => $duration_all,
+
+                    'nombre' => $nombre,
+                    'email' => $email,
+                    'fecha' => $fecha,
+                    'telefono' => $telefono,
+                    'comentario' => $comentario,
+
+                    'country' => $country
+
+                ], function ($messaje) use ($from) {
+                    $messaje->to($from, 'GotoPeru')
+                        ->subject('GotoPeru')
+//                    ->cc($from2, 'GotoPeru')
+                        /*->attach('ruta')*/
+                        ->from('mexico@gotoperu.com', 'GotoPeru');
+                });
+
+                return 'Thank you.';
+            }
+            catch (Exception $e){
+                return $e;
+            }
         }
 
     }

@@ -28,3 +28,5 @@ Route::get('latam-travel-packages/{url}', [PageController::class, 'packages_deta
 Route::get('team', [PageController::class, 'team'])->name('team');
 Route::get('pais', [PageController::class, 'pais'])->name('pais');
 Route::get('destinations/{pais}', [PageController::class, 'destinations'])->name('destination');
+
+Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');
