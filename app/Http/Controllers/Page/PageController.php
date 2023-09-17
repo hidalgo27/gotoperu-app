@@ -145,7 +145,7 @@ class PageController extends Controller
     {
 
 
-        $from = 'info@gotolatam.travel';
+        $from = 'hidalgo@gotoperu.com';
 
         $category_all = '';
         if ($request->category_d){
@@ -189,6 +189,12 @@ class PageController extends Controller
                 }
             }
         }*/
+
+
+        $package = '';
+        if ($request->el_package){
+            $package = $request->el_package;
+        }
 
         $nombre = '';
         if ($request->el_nombre){
@@ -248,9 +254,10 @@ class PageController extends Controller
                     $messaje->to($email, $nombre)
                         ->subject('GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('info@gotolatam.travel', 'GOTOLATAM');
+                        ->from('hidalgo@gotoperu.com', 'GOTOLATAM');
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
+                    'package' => $package,
                     'category_all' => $category_all,
                     'destination_all' => $destination_all,
                     'travellers_all' => $travellers_all,
@@ -269,7 +276,7 @@ class PageController extends Controller
                         ->subject('GOTOLATAM')
 //                    ->cc($from2, 'GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('info@gotolatam.travel', 'GOTOLATAM');
+                        ->from('hidalgo@gotoperu.com', 'GOTOLATAM');
                 });
 
                 return response()->json('Thank you.', 200);

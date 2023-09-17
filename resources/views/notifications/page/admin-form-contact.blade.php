@@ -10,6 +10,7 @@
                     <tbody>
                     <tr>
                         <td style="text-align:left">
+                            <p><strong>Package: {{$package}}</strong></p>
                             <p><strong>Category Hotel: {{$category_all}}</strong></p>
                             <p><strong>Destinations: {{$destination_all}}</strong></p>
                             <p><strong>Travellers: {{$travellers_all}}</strong></p>
