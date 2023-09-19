@@ -206,19 +206,19 @@ class PageController extends Controller
             $email = $request->el_email;
         }
 
-        $fecha = '';
-        if ($request->el_fecha){
-            $fecha = $request->el_fecha;
-        }
-
 //        $fecha = '';
 //        if ($request->el_fecha){
-//            foreach ($request->el_fecha as $date){
-//                if (isset($date)){
-//                    $fecha.=$date;
-//                }
-//            }
+//            $fecha = $request->el_fecha;
 //        }
+
+        $fecha = '';
+        if ($request->el_fecha){
+            foreach ($request->el_fecha as $date){
+                if (isset($date)){
+                    $fecha.=$date;
+                }
+            }
+        }
 
         $telefono = '';
         if ($request->el_telefono){
