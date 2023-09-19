@@ -145,7 +145,7 @@ class PageController extends Controller
     {
 
 
-        $from = 'hidalgo@gotoperu.com';
+        $from = 'paul@gotoperu.com';
 
         $category_all = '';
         if ($request->category_d){
@@ -254,7 +254,7 @@ class PageController extends Controller
                     $messaje->to($email, $nombre)
                         ->subject('GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('hidalgo@gotoperu.com', 'GOTOLATAM');
+                        ->from('paul@gotoperu.com', 'GOTOLATAM');
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
@@ -276,7 +276,7 @@ class PageController extends Controller
                         ->subject('GOTOLATAM')
 //                    ->cc($from2, 'GOTOLATAM')
                         /*->attach('ruta')*/
-                        ->from('hidalgo@gotoperu.com', 'GOTOLATAM');
+                        ->from('paul@gotoperu.com', 'GOTOLATAM');
                 });
 
                 return response()->json('Thank you.', 200);
