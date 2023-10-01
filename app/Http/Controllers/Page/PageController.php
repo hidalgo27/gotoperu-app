@@ -181,14 +181,14 @@ class PageController extends Controller
             $travellers_all = $request->pasajeros_d;
         }
 
-       /* $duration_all = '';
+        $duration_all = '';
         if ($request->duracion_d){
             foreach ($request->duracion_d as $duracion){
                 if (isset($duracion)){
                     $duration_all.=$duracion.',';
                 }
             }
-        }*/
+        }
 
 
         $package = '';
@@ -261,7 +261,7 @@ class PageController extends Controller
                     'category_all' => $category_all,
                     'destination_all' => $destination_all,
                     'travellers_all' => $travellers_all,
-//                    'duration_all' => $duration_all,
+                    'duration_all' => $duration_all,
 
                     'nombre' => $nombre,
                     'email' => $email,

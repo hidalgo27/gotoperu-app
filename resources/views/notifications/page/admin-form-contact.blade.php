@@ -14,7 +14,7 @@
                             <p><strong>Category Hotel: {{$category_all}}</strong></p>
                             <p><strong>Destinations: {{$destination_all}}</strong></p>
                             <p><strong>Travellers: {{$travellers_all}}</strong></p>
-{{--                            <p><strong>Duration: {{$duration_all}}</strong></p>--}}
+                            <p><strong>Duration: {{$duration_all}}</strong></p>
                         </td>
                         <td style="text-align:left">
                             <p><strong>Email: {{$email}}</strong></p>
