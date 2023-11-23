@@ -112,6 +112,22 @@ class PageController extends Controller
         }
 
     }
+
+    public function destinations_show(TPais $pais, TDestino $destinos){
+
+        try {
+            $paquetes_api = TPaqueteDestino::
+            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos')
+                ->where('iddestinos', $destinos->id)
+                ->get();
+            return response()->json($paquetes_api, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
     public function country(TPais $pais){
 
         try {
