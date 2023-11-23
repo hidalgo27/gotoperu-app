@@ -103,6 +103,16 @@ class PageController extends Controller
     }
 
     public function destinations(TPais $pais){
+        try {
+            $destinations = TDestino::where('idpais',$pais->id)->get();
+            return response()->json($destinations, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+    public function country(TPais $pais){
 
         try {
             /*$paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
