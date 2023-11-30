@@ -29,6 +29,6 @@ Route::get('team', [PageController::class, 'team'])->name('team');
 Route::get('pais', [PageController::class, 'pais'])->name('pais');
 //Route::get('destinations/{pais}', [PageController::class, 'country'])->name('destination.country');
 Route::get('destinations/{pais}', [PageController::class, 'destinations'])->name('destination');
-Route::get('destinations/{pais}/peru/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
+Route::get('destinations/{pais}/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
 
 Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');
