@@ -9,7 +9,7 @@
                     <tbody>
                     <tr>
                         <td style="text-align:center">
-                            <p>Gracias por contactar. Un asesor se contactara con usted a la brevedad.</p>
+                            <p>Thank you for contacting GOTOPERU, a travel advisor will contact you in less than 24hrs.</p>
                         </td>
 
                     </tr>

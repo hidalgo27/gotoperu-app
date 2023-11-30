@@ -278,9 +278,9 @@ class PageController extends Controller
             try {
                 Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
                     $messaje->to($email, $nombre)
-                        ->subject('GOTOLATAM')
+                        ->subject('GOTOPERU')
                         /*->attach('ruta')*/
-                        ->from('paul@gotoperu.com', 'GOTOLATAM');
+                        ->from('paul@gotoperu.com', 'GOTOPERU');
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
@@ -298,11 +298,11 @@ class PageController extends Controller
                     'country' => $country
 
                 ], function ($messaje) use ($from) {
-                    $messaje->to($from, 'GOTOLATAM')
-                        ->subject('GOTOLATAM')
-//                    ->cc($from2, 'GOTOLATAM')
+                    $messaje->to($from, 'GOTOPERU')
+                        ->subject('GOTOPERU')
+//                    ->cc($from2, 'GOTOPERU')
                         /*->attach('ruta')*/
-                        ->from('paul@gotoperu.com', 'GOTOLATAM');
+                        ->from('paul@gotoperu.com', 'GOTOPERU');
                 });
 
                 return response()->json('Thank you.', 200);
