@@ -32,3 +32,6 @@ Route::get('destinations/{pais}', [PageController::class, 'destinations'])->name
 Route::get('destinations/{pais}/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
 
 Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');
+
+Route::get('blog', [PageController::class, 'blog'])->name('blog');
+Route::get('/blog/{post}', [PageController::class, 'blog_show'])->name('blog.show');

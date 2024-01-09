@@ -11,6 +11,7 @@ use App\Models\TInquire;
 use App\Models\TPais;
 use App\Models\TPaquete;
 use App\Models\TPaqueteDestino;
+use App\Models\TPost;
 use App\Models\TTeam;
 use App\Models\TTestimonio;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -91,7 +92,7 @@ class PageController extends Controller
         }
 
     }
-    public function pais(){
+    public function     pais(){
         try {
             $pais = TPais::with('destino')->get();
             return response()->json($pais, 200);
@@ -165,6 +166,31 @@ class PageController extends Controller
         }
 
     }
+
+    public function blog(){
+        try {
+            $blogs = TPost::latest('id')->get();
+            $blogs_first = TPost::latest('id')->first();
+            $category = TCategoria::all();
+            return response()->json([['blog_first'=>$blogs_first], ['blogs'=>$blogs], ['category'=>$category]], 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+    }
+    public function blog_show(TPost $post){
+
+//        return view('page.blog-show', compact('post', 'category'));
+
+        try {
+            $category = TCategoria::all();
+            return response()->json([['post'=>$post], ['category'=>$category]], 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+    }
+
 
 
     public function formulario_diseno(Request $request)
