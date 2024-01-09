@@ -172,7 +172,7 @@ class PageController extends Controller
             $blogs = TPost::latest('id')->get();
             $blogs_first = TPost::latest('id')->first();
             $category = TCategoria::all();
-            return response()->json([['blog_first'=>$blogs_first], ['blogs'=>$blogs], ['category'=>$category]], 200);
+            return response()->json(['blog_first'=>$blogs_first, 'blogs'=>$blogs, 'category'=>$category], 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
@@ -184,7 +184,7 @@ class PageController extends Controller
 
         try {
             $category = TCategoria::all();
-            return response()->json([['post'=>$post], ['category'=>$category]], 200);
+            return response()->json(['post'=>$post, 'category'=>$category], 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
