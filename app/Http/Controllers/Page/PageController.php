@@ -186,7 +186,7 @@ class PageController extends Controller
 
 
         try {
-            return response()->json(['post'=>$posts], 200);
+            return response()->json($posts, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
