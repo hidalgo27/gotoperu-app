@@ -182,9 +182,11 @@ class PageController extends Controller
 
 //        return view('page.blog-show', compact('post', 'category'));
 
+        $posts = TPost::with('categoria', 'imagenes')->where('id', $post->id)->get();
+
+
         try {
-            $category = TCategoria::all();
-            return response()->json(['post'=>$post, 'category'=>$category], 200);
+            return response()->json(['post'=>$posts], 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
