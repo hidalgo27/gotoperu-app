@@ -24,7 +24,7 @@ class PageController extends Controller
     public function packages(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes')->get();
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'imagen_paquetes')->get();
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
