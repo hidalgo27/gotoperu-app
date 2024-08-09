@@ -24,7 +24,8 @@ Route::get('packages-top', [PageController::class, 'packages_top'])->name('packa
 Route::get('packages-offers', [PageController::class, 'packages_offers'])->name('package.offers');
 Route::get('hotels-destinations', [PageController::class, 'hotels_destinations'])->name('hotels');
 
-Route::get('latam-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
+Route::get('{latam}-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
+//Route::get('ecuador-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
 Route::get('team', [PageController::class, 'team'])->name('team');
 Route::get('pais', [PageController::class, 'pais'])->name('pais');
 //Route::get('destinations/{pais}', [PageController::class, 'country'])->name('destination.country');
