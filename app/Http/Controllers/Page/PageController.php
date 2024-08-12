@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
+use App\Models\Faq;
 use App\Models\TCategoria;
 use App\Models\TDestino;
 use App\Models\THotel;
@@ -160,6 +161,17 @@ class PageController extends Controller
             $paquetes_api = ($paquetes_api->groupBy('idpaquetes'));
 
             return response()->json($paquetes_api, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function faq(){
+        try {
+            $faq = Faq::all();
+            return response()->json($faq, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
