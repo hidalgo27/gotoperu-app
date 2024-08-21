@@ -316,12 +316,12 @@ class PageController extends Controller
 
         if ($email){
             try {
-                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
-                    $messaje->to($email, $nombre)
-                        ->subject('GOTOPERU')
-                        /*->attach('ruta')*/
-                        ->from('paul@gotoperu.com', 'GOTOPERU');
-                });
+//                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
+//                    $messaje->to($email, $nombre)
+//                        ->subject('GOTOPERU')
+//                        /*->attach('ruta')*/
+//                        ->from('paul@gotoperu.com', 'GOTOPERU');
+//                });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
                     'category_all' => $category_all,
