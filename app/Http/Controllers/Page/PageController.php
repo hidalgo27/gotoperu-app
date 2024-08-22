@@ -317,13 +317,15 @@ class PageController extends Controller
 //        $inquire->comentario = $comentario;
 //        $inquire->save();
 
+        $subject = $product ?? 'Default Subject';
+
         if ($email){
             try {
-                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from) {
+                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from, $subject) {
                     $messaje->to($email, $nombre)
-                        ->subject(env('APP_NAME'))
+                        ->subject($subject)
                         /*->attach('ruta')*/
-                        ->from($from, env('APP_NAME'));
+                        ->from($from, $product);
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
@@ -341,9 +343,9 @@ class PageController extends Controller
                     'country' => $country,
                     'logo' => $logo, 'domain' => $domain, 'product' => $product
 
-                ], function ($messaje) use ($from, $product) {
+                ], function ($messaje) use ($from, $product, $subject) {
                     $messaje->to($from, $product)
-                        ->subject(env('APP_NAME'))
+                        ->subject($subject)
 //                    ->cc($from2, $product)
                         /*->attach('ruta')*/
                         ->from($from, $product);
