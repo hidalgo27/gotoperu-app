@@ -325,7 +325,7 @@ class PageController extends Controller
                     $messaje->to($email, $nombre)
                         ->subject('$subject')
                         /*->attach('ruta')*/
-                        ->from($from, '$product');
+                        ->from('$from', '$product');
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
@@ -348,7 +348,7 @@ class PageController extends Controller
                         ->subject('$subject')
 //                    ->cc($from2, $product)
                         /*->attach('ruta')*/
-                        ->from($from, '$product');
+                        ->from('$from', '$product');
                 });
 
                 return response()->json('Thank you.', 200);
