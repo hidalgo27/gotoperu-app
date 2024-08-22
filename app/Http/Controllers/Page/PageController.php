@@ -322,34 +322,34 @@ class PageController extends Controller
         if ($email){
             try {
                 Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from, $subject) {
-                    $messaje->to($email, $nombre)
+                    $messaje->to('$email', $nombre)
                         ->subject('$subject')
                         /*->attach('ruta')*/
                         ->from('$from', '$product');
                 });
-                Mail::send(['html' => 'notifications.page.admin-form-contact'], [
-                    'package' => $package,
-                    'category_all' => $category_all,
-                    'destination_all' => $destination_all,
-                    'travellers_all' => $travellers_all,
-                    'duration_all' => $duration_all,
-
-                    'nombre' => $nombre,
-                    'email' => $email,
-                    'fecha' => $fecha,
-                    'telefono' => $telefono,
-                    'comentario' => $comentario,
-
-                    'country' => $country,
-                    'logo' => $logo, 'domain' => $domain, 'product' => $product
-
-                ], function ($messaje) use ($from, $product, $subject) {
-                    $messaje->to($from, $product)
-                        ->subject('$subject')
-//                    ->cc($from2, $product)
-                        /*->attach('ruta')*/
-                        ->from('$from', '$product');
-                });
+//                Mail::send(['html' => 'notifications.page.admin-form-contact'], [
+//                    'package' => $package,
+//                    'category_all' => $category_all,
+//                    'destination_all' => $destination_all,
+//                    'travellers_all' => $travellers_all,
+//                    'duration_all' => $duration_all,
+//
+//                    'nombre' => $nombre,
+//                    'email' => $email,
+//                    'fecha' => $fecha,
+//                    'telefono' => $telefono,
+//                    'comentario' => $comentario,
+//
+//                    'country' => $country,
+//                    'logo' => $logo, 'domain' => $domain, 'product' => $product
+//
+//                ], function ($messaje) use ($from, $product, $subject) {
+//                    $messaje->to($from, $product)
+//                        ->subject('$subject')
+////                    ->cc($from2, $product)
+//                        /*->attach('ruta')*/
+//                        ->from('$from', '$product');
+//                });
 
                 return response()->json('Thank you.', 200);
             }
