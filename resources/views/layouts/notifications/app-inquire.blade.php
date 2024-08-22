@@ -8,7 +8,7 @@
                         <tbody>
                         <tr bgcolor="#ffffff">
                             <td valign="top" style="padding:10px 35px 0 35px;color:#ffffff">
-                                <img class="CToWUd" width="350" alt="logo gotoperu" src="https://gotoperu-com.s3-us-west-1.amazonaws.com/logos/logo-gotoperu-black.png" style="vertical-align:top;max-width:220px;margin: 0 auto">
+                                <img class="CToWUd" width="350" alt="logo gotoperu" src="{{$logo}}" style="vertical-align:top;max-width:220px;margin: 0 auto">
                             </td>
 
                         </tr>
@@ -24,10 +24,10 @@
             <tbody>
             <tr>
                 <td style="text-align:center;font-size:12px;padding:5px 15px;color:#999999">
-                    <p>
-                        THE BEST HOLIDAYS IN PERU WITH THE BEST OPERATOR IN LATAM
-                    </p>
-                    <p><a href="https://gotoperu.com/" style="color:#f9a825; font-weight: bold" target="_blank">GOTOPERU</a></p>
+{{--                    <p>--}}
+{{--                        THE BEST HOLIDAYS IN PERU WITH THE BEST OPERATOR IN LATAM--}}
+{{--                    </p>--}}
+                    <p><a href="{{$domain}}" style="color:#f9a825; font-weight: bold" target="_blank">{{$product}}</a></p>
                 </td>
             </tr>
             </tbody>

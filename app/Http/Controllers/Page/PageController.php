@@ -213,6 +213,8 @@ class PageController extends Controller
 
         $from = env('MAIL_EMAIL');
         $product = env('APP_NAME');
+        $logo = env('APP_LOGO');
+        $domain = env('APP_DOMAIN');
 
         $category_all = '';
         if ($request->category_d){
@@ -317,7 +319,7 @@ class PageController extends Controller
 
         if ($email){
             try {
-                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre, $product, $from) {
+                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from) {
                     $messaje->to($email, $nombre)
                         ->subject($product)
                         /*->attach('ruta')*/
@@ -336,7 +338,8 @@ class PageController extends Controller
                     'telefono' => $telefono,
                     'comentario' => $comentario,
 
-                    'country' => $country
+                    'country' => $country,
+                    'logo' => $logo, 'domain' => $domain, 'product' => $product
 
                 ], function ($messaje) use ($from, $product) {
                     $messaje->to($from, $product)
