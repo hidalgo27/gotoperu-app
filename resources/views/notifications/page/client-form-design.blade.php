@@ -9,7 +9,7 @@
                     <tbody>
                     <tr>
                         <td style="text-align:center">
-                            <p>Thank you for contacting GOTOPERU, a travel advisor will contact you in less than 24hrs.</p>
+                            <p>Thank you for contacting {{$product}}, a travel advisor will contact you in less than 24hrs.</p>
                         </td>
 
                     </tr>
