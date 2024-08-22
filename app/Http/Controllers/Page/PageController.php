@@ -322,7 +322,7 @@ class PageController extends Controller
         if ($email){
             try {
                 Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from, $subject) {
-                    $messaje->to('$email', $nombre)
+                    $messaje->to('hidalgochponce@gmail.com', $nombre)
                         ->subject('$subject')
                         /*->attach('ruta')*/
                         ->from('$from', '$product');
