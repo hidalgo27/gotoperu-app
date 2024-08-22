@@ -321,9 +321,9 @@ class PageController extends Controller
             try {
                 Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre, 'logo' => $logo, 'domain' => $domain, 'product' => $product], function ($messaje) use ($email, $nombre, $product, $from) {
                     $messaje->to($email, $nombre)
-                        ->subject($product)
+                        ->subject(env('APP_NAME'))
                         /*->attach('ruta')*/
-                        ->from($from, $product);
+                        ->from($from, env('APP_NAME'));
                 });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
@@ -343,7 +343,7 @@ class PageController extends Controller
 
                 ], function ($messaje) use ($from, $product) {
                     $messaje->to($from, $product)
-                        ->subject($product)
+                        ->subject(env('APP_NAME'))
 //                    ->cc($from2, $product)
                         /*->attach('ruta')*/
                         ->from($from, $product);
