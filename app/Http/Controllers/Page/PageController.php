@@ -211,7 +211,8 @@ class PageController extends Controller
     {
 
 
-        $from = 'paul@gotoperu.com';
+        $from = env('MAIL_EMAIL');
+        $product = env('APP_NAME');
 
         $category_all = '';
         if ($request->category_d){
@@ -316,12 +317,12 @@ class PageController extends Controller
 
         if ($email){
             try {
-//                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre) {
-//                    $messaje->to($email, $nombre)
-//                        ->subject('GOTOPERU')
-//                        /*->attach('ruta')*/
-//                        ->from('paul@gotoperu.com', 'GOTOPERU');
-//                });
+                Mail::send(['html' => 'notifications.page.client-form-design'], ['nombre' => $nombre], function ($messaje) use ($email, $nombre, $product, $from) {
+                    $messaje->to($email, $nombre)
+                        ->subject($product)
+                        /*->attach('ruta')*/
+                        ->from($from, $product);
+                });
                 Mail::send(['html' => 'notifications.page.admin-form-contact'], [
                     'package' => $package,
                     'category_all' => $category_all,
@@ -337,12 +338,12 @@ class PageController extends Controller
 
                     'country' => $country
 
-                ], function ($messaje) use ($from) {
-                    $messaje->to($from, 'GOTOPERU')
-                        ->subject('GOTOPERU')
-//                    ->cc($from2, 'GOTOPERU')
+                ], function ($messaje) use ($from, $product) {
+                    $messaje->to($from, $product)
+                        ->subject($product)
+//                    ->cc($from2, $product)
                         /*->attach('ruta')*/
-                        ->from('paul@gotoperu.com', 'GOTOPERU');
+                        ->from($from, $product);
                 });
 
                 return response()->json('Thank you.', 200);
