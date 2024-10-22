@@ -15,6 +15,7 @@ use App\Models\TPaqueteDestino;
 use App\Models\TPost;
 use App\Models\TTeam;
 use App\Models\TTestimonio;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -341,14 +342,33 @@ class PageController extends Controller
             if ($estado) {
                 $query->where('estado', 'like', '%' . $estado . '%');
             }
+//            if ($startSaleDate && $endSaleDate) {
+//                $query->whereBetween('sale_date', [$startSaleDate, $endSaleDate]);
+//            }
+//            if ($StartTravelDate && $EndTravelDate) {
+//                $query->whereBetween('travel_date', [$StartTravelDate, $EndTravelDate]);
+//            }
+//            if ($createdStart && $createdEnd) {
+//                $query->whereBetween('created_at', [$createdStart, $createdEnd]);
+//            }
+            // Manejo de sale_date con Carbon
             if ($startSaleDate && $endSaleDate) {
+                $startSaleDate = Carbon::parse($startSaleDate)->startOfDay();
+                $endSaleDate = Carbon::parse($endSaleDate)->endOfDay();
                 $query->whereBetween('sale_date', [$startSaleDate, $endSaleDate]);
             }
+
+            // Manejo de travel_date con Carbon
             if ($StartTravelDate && $EndTravelDate) {
+                $StartTravelDate = Carbon::parse($StartTravelDate)->startOfDay();
+                $EndTravelDate = Carbon::parse($EndTravelDate)->endOfDay();
                 $query->whereBetween('travel_date', [$StartTravelDate, $EndTravelDate]);
             }
+            // Manejo de created_at con Carbon
             if ($createdStart && $createdEnd) {
-                $query->whereBetween('created_at', [$createdStart, $createdEnd]);
+                $startDate = Carbon::parse($createdStart)->startOfDay();
+                $endDate = Carbon::parse($createdEnd)->endOfDay();
+                $query->whereBetween('created_at', [$startDate, $endDate]);
             }
 
             $query->orderBy('created_at', 'desc');
