@@ -37,3 +37,13 @@ Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])-
 
 Route::get('blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/blog/{post}', [PageController::class, 'blog_show'])->name('blog.show');
+
+Route::get('/inquires', [PageController::class, 'list_inquires'])->name('list_inquires');
+
+Route::post('/store/inquire', [PageController::class, 'store_inquire'])->name('store_inquire');
+
+Route::put('/update/inquire/{id}', [PageController::class, 'update_inquire'])->name('update_inquire');
+
+Route::get('/inquires/filter', [PageController::class, 'filter_inquires'])->name('filter_inquires');
+
+Route::post('/send/inquire', [PageController::class, 'sendInquire'])->name('sendInquire');

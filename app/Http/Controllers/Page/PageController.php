@@ -205,6 +205,184 @@ class PageController extends Controller
         }
     }
 
+    public function list_inquires()
+    {
+        try {
+            $inquires = TInquire::paginate(10);
+            return response()->json($inquires, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener los registros de TInquire',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function store_inquire(Request $request)
+    {
+        // Convertir arrays a cadenas separadas por comas
+        $category_all = implode(', ', $request->input('category_d', []));
+        $destination_all = implode(', ', $request->input('destino_d', []));
+        $duration_all = implode(', ', $request->input('duracion_d', []));
+
+        // Guardar los datos en la base de datos
+        $inquire = new TInquire();
+
+        $inquire->hotel = $category_all;
+        $inquire->destinos = $destination_all;
+        $inquire->duracion = $duration_all;
+        $inquire->pasajeros = $request->input('pasajeros_d');
+        $inquire->nombre = $request->input('el_nombre');
+        $inquire->email = $request->input('el_email');
+        $inquire->travel_date = $request->input('el_fecha');
+        $inquire->telefono = $request->input('el_telefono');
+        $inquire->comentario = $request->input('el_textarea');
+
+        $inquire->codigo_pais = $request->input('codigo_pais');
+        $inquire->device = $request->input('device');
+        $inquire->browser = $request->input('browser');
+        $inquire->origen = $request->input('origen');
+        $inquire->producto = $request->input('producto');
+
+        $inquire->save();
+
+        return response()->json(['message' => 'Data saved successfully']);
+
+    }
+
+    public function update_inquire(Request $request, $id)
+    {
+        // Validar los datos de entrada
+        $validatedData = $request->validate([
+            'precio_inicial' => 'nullable|numeric',
+            'precio_venta' => 'nullable|numeric',
+            'sub_profit' => 'nullable|numeric',
+            'profit' => 'nullable|numeric',
+            'estado' => 'nullable|numeric',
+            'sent' => 'nullable|numeric',
+            'vendedor' => 'nullable|int',
+            'sale_date' => 'nullable|date',
+        ]);
+        // Buscar el registro que se va a actualizar
+        $inquire = TInquire::findOrFail($id); // Encuentra el registro por ID o falla si no existe
+//        dd($inquire);
+
+        // Actualizar los datos en la base de datos
+        $inquire->precio_inicial = $request->input('precio_inicial');
+        $inquire->precio_venta = $request->input('precio_venta');
+        $inquire->sub_profit = $request->input('sub_profit');
+        $inquire->profit = $request->input('profit');
+        $inquire->estado = $request->input('estado');
+        $inquire->sent = $request->input('sent');
+        $inquire->vendedor = $request->input('vendedor');
+        $inquire->sale_date = $request->input('sale_date');
+
+        // Guardar los cambios
+        $inquire->save();
+
+        return response()->json([
+            'message' => 'Data updated successfully',
+            'updated_data' => [
+                'precio_inicial' => $inquire->precio_inicial,
+                'precio_venta' => $inquire->precio_venta,
+                'sub_profit' => $inquire->sub_profit,
+                'profit' => $inquire->profit,
+                'estado' => $inquire->estado,
+                'sent' => $inquire->sent,
+                'vendedor' => $inquire->vendedor,
+                'sale_date' => $inquire->sale_date,
+                'updated_at' => $inquire->updated_at, // Retorna la fecha de la última actualización
+            ]
+        ], 200);
+
+//        return response()->json(['message' => 'Data updated successfully']);
+    }
+
+    public function filter_inquires(Request $request)
+    {
+        try {
+            // Obtener los parámetros del filtro
+            $vendedor = $request->input('vendedor');
+            $producto = $request->input('producto');
+            $device = $request->input('device');
+            $browser = $request->input('browser');
+            $origen = $request->input('origen');
+            $estado = $request->input('estado');
+
+            $startSaleDate = $request->input('start_sale_date');
+            $endSaleDate = $request->input('end_sale_date');
+
+            $StartTravelDate = $request->input('start_travel_date');  // Fecha de inicio para el rango de 'fecha'
+            $EndTravelDate = $request->input('end_travel_date');      // Fecha de fin para el rango de 'fecha'
+
+            $createdStart = $request->input('created_start');  // Fecha de inicio para el rango de 'created_at'
+            $createdEnd = $request->input('created_end');      // Fecha de fin para el rango de 'created_at'
+
+            $perPage = $request->input('per_page', 10);
+
+            // Construir la consulta para la paginación
+            $query = TInquire::query();
+
+            // Filtrar según los criterios dados
+            if ($vendedor) {
+                $query->where('vendedor', 'like', '%' . $vendedor . '%');
+            }
+            if ($producto) {
+                $query->where('producto', 'like', '%' . $producto . '%');
+            }
+            if ($device) {
+                $query->where('device', 'like', '%' . $device . '%');
+            }
+            if ($browser) {
+                $query->where('browser', 'like', '%' . $browser . '%');
+            }
+            if ($origen) {
+                $query->where('origen', 'like', '%' . $origen . '%');
+            }
+            if ($estado) {
+                $query->where('estado', 'like', '%' . $estado . '%');
+            }
+            if ($startSaleDate && $endSaleDate) {
+                $query->whereBetween('sale_date', [$startSaleDate, $endSaleDate]);
+            }
+            if ($StartTravelDate && $EndTravelDate) {
+                $query->whereBetween('travel_date', [$StartTravelDate, $EndTravelDate]);
+            }
+            if ($createdStart && $createdEnd) {
+                $query->whereBetween('created_at', [$createdStart, $createdEnd]);
+            }
+
+            $query->orderBy('created_at', 'desc');
+
+            // Clonar la consulta para obtener las sumas de todas las filas
+            $totalsQuery = clone $query;
+
+            // Obtener los resultados paginados
+            $inquires = $query->paginate($perPage);
+
+            // Calcular la suma de las columnas sin la paginación
+            $totalPrecioInicial = $totalsQuery->sum('precio_inicial');
+            $totalPrecioVenta = $totalsQuery->sum('precio_venta');
+            $totalSubProfit = $totalsQuery->sum('sub_profit');
+            $totalProfit = $totalsQuery->sum('profit');
+
+            // Retornar los resultados en formato JSON
+            return response()->json([
+                'inquires' => $inquires,
+                'totals' => [
+                    'total_precio_inicial' => $totalPrecioInicial,
+                    'total_precio_venta' => $totalPrecioVenta,
+                    'total_sub_profit' => $totalSubProfit,
+                    'total_profit' => $totalProfit
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return response()->json([
+                'message' => 'Error al filtrar los registros de TInquire',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 
     public function formulario_diseno(Request $request)
@@ -358,6 +536,69 @@ class PageController extends Controller
             }
         }
 
+    }
+
+    public function sendInquire(Request $request)
+    {
+        // Validar los datos entrantes
+        $request->validate([
+            'to_mail' => 'nullable|string',
+            'package' => 'nullable|string',
+            'category_d' => 'nullable|string',
+            'destino_d' => 'nullable|string',
+            'pasajeros_d' => 'nullable|string',
+            'duracion_d' => 'nullable|string',
+            'el_nombre' => 'nullable|string',
+            'el_email' => 'nullable|email',
+            'el_fecha' => 'nullable|date',
+            'el_telefono' => 'nullable|string',
+            'el_textarea' => 'nullable|string',
+            'country' => 'nullable|string'
+        ]);
+
+        // Recoger los datos del request
+        $to_mail = $request->input('to_mail');
+        $package = $request->input('package');
+        $category_all = $request->input('category_d');
+        $destination_all = $request->input('destino_d');
+        $travellers_all = $request->input('pasajeros_d');
+        $duration_all = $request->input('duracion_d');
+        $nombre = $request->input('el_nombre');
+        $email = $request->input('el_email');
+        $fecha = $request->input('el_fecha');
+        $telefono = $request->input('el_telefono');
+        $comentario = $request->input('el_textarea');
+        $country = $request->input('country');
+
+        // Datos adicionales para el correo
+        $from = env('MAIL_EMAIL');
+        $product = env('APP_NAME');
+        $logo = env('APP_LOGO');
+        $domain = env('APP_DOMAIN');
+
+        // Envío del correo
+        Mail::send(['html' => 'notifications.page.admin-send-inquire'], [
+            'package' => $package,
+            'category' => $category_all,
+            'destination' => $destination_all,
+            'travellers' => $travellers_all,
+            'duration' => $duration_all,
+            'nombre' => $nombre,
+            'email' => $email,
+            'fecha' => $fecha,
+            'telefono' => $telefono,
+            'comentario' => $comentario,
+            'country' => $country,
+            'logo' => $logo,
+            'domain' => $domain,
+            'product' => $product
+        ], function ($message) use ($from, $product, $to_mail) {
+            $message->to($to_mail, $product)
+                ->subject($product)
+                ->from($from, $product);
+        });
+
+        return response()->json(['message' => 'Correo enviado con éxito.'], 200);
     }
 
 }
