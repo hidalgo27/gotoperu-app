@@ -612,10 +612,10 @@ class PageController extends Controller
             'logo' => $logo,
             'domain' => $domain,
             'product' => $product
-        ], function ($message) use ($from, $product, $to_mail) {
-            $message->to($to_mail, $product)
-                ->subject($product)
-                ->from($from, $product);
+        ], function ($message) use ($from, $product, $to_mail, $country, $nombre, $travellers_all) {
+            $message->to($to_mail, $country.': '.$nombre.' x '.$travellers_all)
+                ->subject($country.': '.$nombre.' x '.$travellers_all)
+                ->from($from, 'ADMIN');
         });
 
         return response()->json(['message' => 'Correo enviado con éxito.'], 200);
