@@ -228,6 +228,8 @@ class PageController extends Controller
         // Guardar los datos en la base de datos
         $inquire = new TInquire();
 
+
+        $inquire->package = $request->input('package');
         $inquire->hotel = $category_all;
         $inquire->destinos = $destination_all;
         $inquire->duracion = $duration_all;
