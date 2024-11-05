@@ -12,4 +12,9 @@ class THotel extends Model
     {
         return $this->hasMany(THotelDestino::class, 'idhotel');
     }
+
+    public function destinos()
+    {
+        return $this->belongsToMany(TDestino::class, 'thoteldestino', 'idhotel', 'iddestinos');
+    }
 }

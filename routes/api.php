@@ -23,6 +23,7 @@ Route::get('packages', [PageController::class, 'packages'])->name('package');
 Route::get('packages-top', [PageController::class, 'packages_top'])->name('package.top');
 Route::get('packages-offers', [PageController::class, 'packages_offers'])->name('package.offers');
 Route::get('hotels-destinations', [PageController::class, 'hotels_destinations'])->name('hotels');
+Route::get('destinations-hotels', [PageController::class, 'destinations_hotels'])->name('destinations_hotels');
 
 Route::get('{latam}-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');
 //Route::get('ecuador-travel-packages/{url}', [PageController::class, 'packages_detail'])->name('packages.detail');

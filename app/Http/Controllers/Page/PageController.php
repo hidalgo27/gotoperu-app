@@ -83,6 +83,17 @@ class PageController extends Controller
 
     }
 
+    public function destinations_hotels() {
+        try {
+            // Obtener todos los destinos con sus hoteles relacionados
+            $destinos = TDestino::with('hoteles')->get();
+
+            return response()->json($destinos, 200);
+        } catch (\Exception $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
     public function team(){
         try {
             $team = TTeam::orderBy('id', 'desc')->get();
