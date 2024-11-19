@@ -257,6 +257,8 @@ class PageController extends Controller
         $inquire->origen = $request->input('origen');
         $inquire->producto = $request->input('producto');
 
+        $inquire->inquire_date = $request->input('inquire_date');
+
         $inquire->save();
 
         return response()->json(['message' => 'Data saved successfully']);
