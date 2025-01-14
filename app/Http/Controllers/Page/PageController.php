@@ -342,8 +342,12 @@ class PageController extends Controller
             if ($vendedor) {
                 $query->where('vendedor', 'like', '%' . $vendedor . '%');
             }
+//            if ($producto) {
+//                $query->where('producto', 'like', '%' . $producto . '%');
+//            }
             if ($producto) {
-                $query->where('producto', 'like', '%' . $producto . '%');
+//                $query->where('producto', '=', $producto);
+                $query->whereRaw('LOWER(producto) = ?', [strtolower($producto)]);
             }
             if ($device) {
                 $query->where('device', 'like', '%' . $device . '%');
