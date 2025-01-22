@@ -252,6 +252,7 @@ class PageController extends Controller
         $inquire->comentario = $request->input('el_textarea');
 
         $inquire->codigo_pais = $request->input('codigo_pais');
+        $inquire->country = $request->input('country');
         $inquire->device = $request->input('device');
         $inquire->browser = $request->input('browser');
         $inquire->origen = $request->input('origen');
