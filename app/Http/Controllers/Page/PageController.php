@@ -256,6 +256,8 @@ class PageController extends Controller
         $inquire->browser = $request->input('browser');
         $inquire->origen = $request->input('origen');
         $inquire->producto = $request->input('producto');
+        $inquire->company = $request->input('company');
+        $inquire->company_country = $request->input('company_country');
 
         $inquire->inquire_date = $request->input('inquire_date');
 
