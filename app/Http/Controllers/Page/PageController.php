@@ -343,7 +343,8 @@ class PageController extends Controller
 
             // Filtrar según los criterios dados
             if ($vendedor) {
-                $query->where('vendedor', 'like', '%' . $vendedor . '%');
+//                $query->where('vendedor', 'like', '%' . $vendedor . '%');
+                $query->where('vendedor', '=', $vendedor);
             }
 //            if ($producto) {
 //                $query->where('producto', 'like', '%' . $producto . '%');
