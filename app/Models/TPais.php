@@ -23,6 +23,6 @@ class TPais extends Model
 
     public function destino()
     {
-        return $this->hasMany(TDestino::class, 'idpais');
+        return $this->hasMany(TDestino::class, 'idpais','id');
     }
 }

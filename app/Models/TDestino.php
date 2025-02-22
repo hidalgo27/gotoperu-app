@@ -35,6 +35,13 @@ class TDestino extends Model
 
     public function pais()
     {
-        return $this->belongsTo(TPais::class, 'idpais');
+        return $this->belongsTo(TPais::class, 'idpais', 'id');
     }
+
+    public function paquetes()
+    {
+        return $this->belongsToMany(TPaquete::class, 'tpaquetesdestinos', 'iddestinos', 'idpaquetes');
+    }
+
+
 }

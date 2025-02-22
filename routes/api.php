@@ -30,9 +30,14 @@ Route::get('{latam}-travel-packages/{url}', [PageController::class, 'packages_de
 Route::get('team', [PageController::class, 'team'])->name('team');
 Route::get('faq', [PageController::class, 'faq'])->name('faq');
 Route::get('pais', [PageController::class, 'pais'])->name('pais');
-//Route::get('destinations/{pais}', [PageController::class, 'country'])->name('destination.country');
+Route::get('pais/{country}', [PageController::class, 'country'])->name('destination.country');
 Route::get('destinations/{pais}', [PageController::class, 'destinations'])->name('destination');
 Route::get('destinations/{pais}/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
+Route::get('pais/packages/{pais}', [PageController::class, 'packages_by_country'])->name('destination.packages.pais.show');
+
+Route::get('categorias', [PageController::class, 'category'])->name('category');
+Route::get('categorias/{categoria}', [PageController::class, 'categories_show'])->name('category.show.show');
+Route::get('categorias/{pais}/{categoria}', [PageController::class, 'packages_by_country_and_category'])->name('category.pais.show');
 
 Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');
 

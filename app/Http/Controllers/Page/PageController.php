@@ -11,6 +11,7 @@ use App\Models\THotelDestino;
 use App\Models\TInquire;
 use App\Models\TPais;
 use App\Models\TPaquete;
+use App\Models\TPaqueteCategoria;
 use App\Models\TPaqueteDestino;
 use App\Models\TPost;
 use App\Models\TTeam;
@@ -26,7 +27,7 @@ class PageController extends Controller
     public function packages(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'imagen_paquetes')->get();
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'imagen_paquetes', 'paquetes_categoria.categoria')->get();
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -37,7 +38,7 @@ class PageController extends Controller
     public function packages_top(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes')
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'paquetes_categoria.categoria')
                 ->where('estado', '1')
                 ->get();
             return response()->json($paquetes, 200);
@@ -50,7 +51,7 @@ class PageController extends Controller
     public function packages_offers(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes')
+            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'paquetes_categoria.categoria')
                 ->where('offers_home', '1')
                 ->get();
             return response()->json($paquetes, 200);
@@ -63,7 +64,7 @@ class PageController extends Controller
 
     public function packages_detail($latam,$url) {
         try {
-            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.pais','paquetes_destinos.destinos.destino_imagen', 'precio_paquetes', 'imagen_paquetes')->where('url', $url)->get();
+            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.pais','paquetes_categoria.categoria','paquetes_destinos.destinos.destino_imagen', 'precio_paquetes', 'imagen_paquetes')->where('url', $url)->get();
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -105,7 +106,7 @@ class PageController extends Controller
         }
 
     }
-    public function     pais(){
+    public function pais(){
         try {
             $pais = TPais::with('destino')->get();
             return response()->json($pais, 200);
@@ -131,7 +132,7 @@ class PageController extends Controller
 
         try {
             $paquetes_api = TPaqueteDestino::
-            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos')
+            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos','paquetes.paquetes_categoria.categoria')
                 ->where('iddestinos', $destinos->id)
                 ->get();
             return response()->json($paquetes_api, 200);
@@ -142,37 +143,80 @@ class PageController extends Controller
 
     }
 
-    public function country(TPais $pais){
+    public function categories_show(TCategoria $categoria){
 
         try {
-            /*$paquetes_de = TPaqueteDestino::with(['paquetes.precio_paquetes','paquetes.paquetes_destinos.destinos.pais','destinos'=>function(Builder $query) use ($pais) { $query->where('idpais', $pais->id);}])->get();
+            $categoria = TCategoria::with('paquetes.paquetes_categoria.categoria')->find($categoria->id);
+            return response()->json($categoria, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
 
-            $paquetes_show = $paquetes_de->where('destinos', '!=', null)->unique('idpaquetes');*/
+    }
 
-            $paquetes_api = DB::table('tpaquetesdestinos')
-                ->join('tdestinos', 'tpaquetesdestinos.iddestinos', '=', 'tdestinos.id')
-//            ->select('idpais', DB::raw('count(*) as user_count'))
-////            ->count('idpais')
-/// ->join('tdestinos', 'tpaquetesdestinos.iddestinos', '=', 'tdestinos.id')
-                ->select('idpaquetes', 'idpais')
-                ->groupByRaw('idpaquetes, idpais')
-//                ->select('idpaquetes', 'idpais',DB::raw('count(idpaquetes) as user_count'))
-//            ->toArray();
-//            ->select('idpaquetes', 'user_count')
-//                ->groupByRaw('idpaquetes, user_count')
-                ->get();
+    public function packages_by_country_and_category(TPais $pais, TCategoria $categoria)
+    {
+        $pais = TPais::with('destino.paquetes.categorias')->find($pais->id);
 
+        if (!$pais) {
+            return response()->json([
+                'error' => 'País no encontrado'
+            ], 404);
+        }
 
-//        $paquetes_api = $paquetes_api
-//            ->select(DB::raw('count(idpaquetes) as user_count'))
-//            ->groupBy('idpaquetes')
-//            ->get()
-//        ;
+        $categoria = TCategoria::find($categoria->id);
 
+        if (!$categoria) {
+            return response()->json([
+                'error' => 'Categoría no encontrada'
+            ], 404);
+        }
 
-            $paquetes_api = ($paquetes_api->groupBy('idpaquetes'));
+        // Filtrar los paquetes que pertenecen al país y la categoría
+        $paquetes = collect();
+        foreach ($pais->destino as $destino) {
+            foreach ($destino->paquetes as $paquete) {
+                if ($paquete->categorias->contains('id', $categoria->id)) {
+                    $paquetes->push($paquete);
+                }
+            }
+        }
 
-            return response()->json($paquetes_api, 200);
+        return response()->json([
+            'pais' => $pais->nombre,
+            'categoria' => $categoria->nombre,
+            'paquetes' => $paquetes->unique('id')->values()
+        ]);
+    }
+
+    public function packages_by_country(TPais $pais)
+    {
+        $pais = TPais::with('destino.paquetes.paquetes_categoria.categoria','destino.paquetes.precio_paquetes', 'destino.paquetes.paquetes_destinos.destinos')->find($pais->id);
+
+        if (!$pais) {
+            return response()->json([
+                'error' => 'País no encontrado'
+            ], 404);
+        }
+
+        // Extraer todos los paquetes asociados al país
+        $paquetes = collect();
+        foreach ($pais->destino as $destino) {
+            foreach ($destino->paquetes as $paquete) {
+                $paquetes->push($paquete);
+            }
+        }
+
+        return response()->json([
+            'pais' => $pais->nombre,
+            'paquetes' => $paquetes->unique('id')->values()
+        ]);
+    }
+
+    public function country(TPais $country){
+        try {
+            return response()->json($country, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
@@ -184,6 +228,17 @@ class PageController extends Controller
         try {
             $faq = Faq::all();
             return response()->json($faq, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function category(TCategoria $category){
+        try {
+            $categories = TCategoria::all();
+            return response()->json($categories, 200);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
