@@ -29,6 +29,11 @@ class TDestino extends Model
         return $this->hasMany(TDestinoImagen::class, 'iddestinos');
     }
 
+    public function imagenes()
+    {
+        return $this->hasMany(TDestinoImagen::class, 'iddestinos', 'id');
+    }
+
     public function hoteles(){
         return $this->belongsToMany(THotel::class, 'thoteldestino', 'iddestinos', 'idhotel');
     }

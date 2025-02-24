@@ -25,4 +25,11 @@ class TPais extends Model
     {
         return $this->hasMany(TDestino::class, 'idpais','id');
     }
+
+    public function propiedades()
+    {
+        return $this->hasMany(TPaisPropiedades::class, 'idpais');
+    }
+
+
 }

@@ -32,8 +32,10 @@ Route::get('faq', [PageController::class, 'faq'])->name('faq');
 Route::get('pais', [PageController::class, 'pais'])->name('pais');
 Route::get('pais/{country}', [PageController::class, 'country'])->name('destination.country');
 Route::get('destinations/{pais}', [PageController::class, 'destinations'])->name('destination');
-Route::get('destinations/{pais}/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
+Route::get('destinations/region/{destinos}', [PageController::class, 'destinations_show'])->name('destination.show.show');
 Route::get('pais/packages/{pais}', [PageController::class, 'packages_by_country'])->name('destination.packages.pais.show');
+Route::get('pais/datalle/{country}', [PageController::class, 'CountryDetails'])->name('destination.country.propiedades');
+//Route::get('pais/region/{region}', [PageController::class, 'RegionDetails'])->name('destination.region.propiedades');
 
 Route::get('categorias', [PageController::class, 'category'])->name('category');
 Route::get('categorias/{categoria}', [PageController::class, 'categories_show'])->name('category.show.show');

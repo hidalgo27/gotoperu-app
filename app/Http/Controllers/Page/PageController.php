@@ -131,11 +131,77 @@ class PageController extends Controller
     public function destinations_show(TPais $pais, TDestino $destinos){
 
         try {
-            $paquetes_api = TPaqueteDestino::
-            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos','paquetes.paquetes_categoria.categoria')
-                ->where('iddestinos', $destinos->id)
-                ->get();
-            return response()->json($paquetes_api, 200);
+//            $paquetes_api = TPaqueteDestino::
+//            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos','paquetes.paquetes_categoria.categoria')
+//                ->where('iddestinos', $destinos->id)
+//                ->get();
+//            return response()->json($paquetes_api, 200);
+
+            $destino = TDestino::with('imagenes:id,iddestinos,nombre,alt')
+                ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle')
+                ->find($destinos->id);
+
+            if (!$destino) {
+                return response()->json([
+                    'error' => 'Destino no encontrado'
+                ], 404);
+            }
+
+            // Obtener los paquetes relacionados con el destino
+            $paquetes = $destino->paquetes()->select(
+                'tpaquetes.id',
+                'tpaquetes.titulo',
+                'tpaquetes.url',
+                'tpaquetes.duracion',
+                'tpaquetes.estado',
+                'tpaquetes.offers_home',
+                'tpaquetes.descuento'
+            )
+                ->with([
+                    'categorias:id,nombre,url',
+                    'destinos:id,codigo,nombre,url',
+                    'precio_paquetes'
+                ])->get()->map(function ($paquete) {
+                    return [
+                        'id' => $paquete->id,
+                        'titulo' => $paquete->titulo,
+                        'duracion' => $paquete->duracion,
+                        'url' => $paquete->url,
+                        'estado' => $paquete->estado,
+                        'offers_home' => $paquete->offers_home,
+                        'descuento' => $paquete->descuento,
+                        'categorias' => $paquete->categorias,
+                        'precio_paquetes' => $paquete->precio_paquetes,
+                        'destinos' => $paquete->destinos->map(function ($dest) {
+                            return [
+                                'id' => $dest->id,
+                                'codigo' => $dest->codigo,
+                                'nombre' => $dest->nombre,
+                                'url' => $dest->url
+                            ];
+                        }),
+                    ];
+                });
+
+
+            return response()->json([
+                'destino' => [
+                    'id' => $destino->id,
+                    'codigo' => $destino->codigo,
+                    'nombre' => $destino->nombre,
+                    'url' => $destino->url,
+                    'titulo' => $destino->titulo,
+                    'resumen' => $destino->resumen,
+                    'descripcion' => $destino->descripcion,
+                    'imagen' => $destino->descripcion,
+                    'wtitle' => $destino->wtitle,
+                    'wtext' => $destino->wtext,
+                    'wimage' => $destino->wimage,
+                    'imagenes' => $destino->imagenes,
+                    'paquetes' => $paquetes
+                ]
+            ]);
+
         } catch (\Exception $th) {
             //throw $th;
             return $th;
@@ -212,6 +278,99 @@ class PageController extends Controller
             'pais' => $pais->nombre,
             'paquetes' => $paquetes->unique('id')->values()
         ]);
+    }
+
+    public function country_properties2(TPais $country){
+        try {
+            $pais = TPais::with('propiedades', 'destino')->find($country->id);
+
+            if (!$pais) {
+                return response()->json(['message' => 'País no encontrado'], 404);
+            }
+
+            return response()->json([
+                'pais' => $pais->nombre,
+                'resumen' => $pais->resumen,
+                'imagen' => $pais->imagen,
+                'propiedades' => $pais->propiedades
+            ], 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function CountryDetails(TPais $country)
+    {
+
+        $pais = TPais::with([
+            'destino' => function ($query) {
+                $query->select('id', 'idpais', 'codigo', 'nombre','url','imagen')->with('imagenes:id,iddestinos,nombre,alt');
+            },
+            'propiedades:id,idpais,nombre,descripcion,imagen'
+        ])->find($country->id);
+
+        if (!$pais) {
+            return response()->json([
+                'error' => 'País no encontrado'
+            ], 404);
+        }
+
+        $paquetes = collect();
+        foreach ($pais->destino as $destino) {
+            foreach ($destino->paquetes()->select(
+                'tpaquetes.id',
+                'tpaquetes.titulo',
+                'tpaquetes.url',
+                'tpaquetes.duracion',
+                'tpaquetes.estado',
+                'tpaquetes.offers_home',
+                'tpaquetes.descuento'
+            )->with([
+                'categorias:id,nombre',
+                'destinos:id,codigo,nombre,url',
+                'precio_paquetes'
+            ])->get() as $paquete) {
+                $paquetes->push([
+                    'id' => $paquete->id,
+                    'titulo' => $paquete->titulo,
+                    'duracion' => $paquete->duracion,
+                    'url' => $paquete->url,
+                    'estado' => $paquete->estado,
+                    'offers_home' => $paquete->offers_home,
+                    'descuento' => $paquete->descuento,
+                    'categorias' => $paquete->categorias,
+                    'precio_paquetes' => $paquete->precio_paquetes,
+                    'destinos' => $paquete->destinos->map(function ($dest) {
+                        return [
+                            'id' => $dest->id,
+                            'codigo' => $dest->codigo,
+                            'nombre' => $dest->nombre,
+                            'url' => $dest->url
+                        ];
+                    }),
+                ]);
+            }
+        }
+
+        return response()->json([
+            'pais' => [
+                'id' => $pais->id,
+                'nombre' => $pais->nombre,
+                'titulo' => $pais->titulo,
+                'codigo' => $pais->codigo,
+                'url' => $pais->url,
+                'resumen' => $pais->resumen,
+                'descripcion' => $pais->descripcion,
+                'imagen' => $pais->imagen,
+                'imagen_s' => $pais->imagen_s,
+                'propiedades' => $pais->propiedades,
+                'destinos' => $pais->destino,
+                'paquetes' => $paquetes->unique('titulo')->values()
+            ]
+        ]);
+
     }
 
     public function country(TPais $country){
