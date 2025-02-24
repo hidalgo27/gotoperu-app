@@ -137,8 +137,8 @@ class PageController extends Controller
 //                ->get();
 //            return response()->json($paquetes_api, 200);
 
-            $destino = TDestino::with('imagenes:id,iddestinos,nombre,alt')
-                ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle')
+            $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt'])
+                ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle','idpais')
                 ->find($destinos->id);
 
             if (!$destino) {
@@ -197,6 +197,7 @@ class PageController extends Controller
                     'wtitle' => $destino->wtitle,
                     'wtext' => $destino->wtext,
                     'wimage' => $destino->wimage,
+                    'pais' => $destino->pais,
                     'imagenes' => $destino->imagenes,
                     'paquetes' => $paquetes
                 ]
@@ -365,6 +366,11 @@ class PageController extends Controller
                 'descripcion' => $pais->descripcion,
                 'imagen' => $pais->imagen,
                 'imagen_s' => $pais->imagen_s,
+                'population' => $pais->population,
+                'languages' => $pais->languages,
+                'currency_name' => $pais->currency_name,
+                'currency_code' => $pais->currency_code,
+                'capital' => $pais->capital,
                 'propiedades' => $pais->propiedades,
                 'destinos' => $pais->destino,
                 'paquetes' => $paquetes->unique('titulo')->values()
