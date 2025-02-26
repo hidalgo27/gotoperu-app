@@ -97,15 +97,134 @@ class PageController extends Controller
 
     public function team(){
         try {
-            $team = TTeam::orderBy('id', 'desc')->get();
+            $teams = TTeam::with([
+                'destinos:id,codigo,nombre,url',
+                'paises:id,codigo,nombre,url'
+            ])->select(
+                'id', 'nombre', 'actividad', 'cargo', 'frase', 'email', 'descripcion',
+                'fun_facts', 'favorite_quote', 'favorite_travel_memory', 'imagen_perfil', 'imagen_portada'
+            )->get();
 
-            return response()->json($team);
+            return response()->json([
+                'teams' => $teams->map(function ($team) {
+                    return [
+                        'id' => $team->id,
+                        'nombre' => $team->nombre,
+                        'actividad' => $team->actividad,
+                        'cargo' => $team->cargo,
+                        'frase' => $team->frase,
+                        'email' => $team->email,
+                        'descripcion' => $team->descripcion,
+                        'fun_facts' => $team->fun_facts,
+                        'favorite_quote' => $team->favorite_quote,
+                        'favorite_travel_memory' => $team->favorite_travel_memory,
+                        'imagen_perfil' => $team->imagen_perfil,
+                        'imagen_portada' => $team->imagen_portada,
+                        'destinos' => $team->destinos,
+                        'paises' => $team->paises
+                    ];
+                })
+            ]);
         } catch (\Exception $th) {
             //throw $th;
             return $th;
         }
 
     }
+
+    public function team_show(TTeam $team){
+        try {
+//            $team = TTeam::orderBy('id', 'desc')->get();
+//
+//            return response()->json($team);
+
+            $team = TTeam::with([
+                'destinos:id,codigo,nombre,url',
+                'paises:id,codigo,nombre,url'
+            ])->select(
+                'id', 'nombre', 'actividad', 'cargo', 'frase', 'email', 'descripcion',
+                'fun_facts', 'favorite_quote', 'favorite_travel_memory', 'imagen_perfil', 'imagen_portada'
+            )->find($team->id);
+
+            if (!$team) {
+                return response()->json([
+                    'error' => 'Miembro del equipo no encontrado'
+                ], 404);
+            }
+
+            return response()->json([
+                'team' => [
+                    'id' => $team->id,
+                    'nombre' => $team->nombre,
+                    'actividad' => $team->actividad,
+                    'cargo' => $team->cargo,
+                    'frase' => $team->frase,
+                    'email' => $team->email,
+                    'descripcion' => $team->descripcion,
+                    'fun_facts' => $team->fun_facts,
+                    'favorite_quote' => $team->favorite_quote,
+                    'favorite_travel_memory' => $team->favorite_travel_memory,
+                    'imagen_perfil' => $team->imagen_perfil,
+                    'imagen_portada' => $team->imagen_portada,
+                    'destinos' => $team->destinos,
+                    'paises' => $team->paises
+                ]
+            ]);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function team_destino(TDestino $destino)
+    {
+        // Obtener el destino con sus equipos
+        $destino = TDestino::with('teams:id,nombre,actividad,cargo,frase,email,descripcion,fun_facts,favorite_quote,favorite_travel_memory,imagen_perfil,imagen_portada')
+            ->select('id', 'codigo', 'nombre', 'url')
+            ->find($destino->id);
+
+        if (!$destino) {
+            return response()->json([
+                'error' => 'Destino no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'destino' => [
+                'id' => $destino->id,
+                'codigo' => $destino->codigo,
+                'nombre' => $destino->nombre,
+                'url' => $destino->url,
+                'teams' => $destino->teams
+            ]
+        ]);
+    }
+
+    public function team_country(TPais $country)
+    {
+        // Obtener el país con sus equipos
+        $pais = TPais::with('teams:id,nombre,actividad,cargo,frase,email,descripcion,fun_facts,favorite_quote,favorite_travel_memory,imagen_perfil,imagen_portada')
+            ->select('id', 'codigo', 'nombre', 'url')
+            ->find($country->id);
+
+        if (!$pais) {
+            return response()->json([
+                'error' => 'País no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'pais' => [
+                'id' => $pais->id,
+                'codigo' => $pais->codigo,
+                'nombre' => $pais->nombre,
+                'url' => $pais->url,
+                'teams' => $pais->teams
+            ]
+        ]);
+    }
+
     public function pais(){
         try {
             $pais = TPais::with('destino')->get();
@@ -329,7 +448,7 @@ class PageController extends Controller
                 'tpaquetes.offers_home',
                 'tpaquetes.descuento'
             )->with([
-                'categorias:id,nombre',
+                'categorias:id,nombre,url',
                 'destinos:id,codigo,nombre,url',
                 'precio_paquetes'
             ])->get() as $paquete) {
@@ -382,6 +501,74 @@ class PageController extends Controller
     public function country(TPais $country){
         try {
             return response()->json($country, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
+    }
+
+    public function offers_country(TPais $country){
+        try {
+            // Obtener el país con sus destinos
+            $pais = TPais::with('destino')->find($country->id);
+
+            if (!$pais) {
+                return response()->json([
+                    'error' => 'País no encontrado'
+                ], 404);
+            }
+
+            // Obtener los paquetes con offers_home = 1
+            $paquetes = collect();
+            foreach ($pais->destino as $destino) {
+                foreach ($destino->paquetes()->where('offers_home', 1)
+                             ->select(
+                                 'tpaquetes.id',
+                                 'tpaquetes.titulo',
+                                 'tpaquetes.url',
+                                 'tpaquetes.duracion',
+                                 'tpaquetes.estado',
+                                 'tpaquetes.offers_home',
+                                 'tpaquetes.descuento'
+                             )
+                             ->with([
+                                 'categorias:id,nombre,url',
+                                 'destinos:id,codigo,nombre,url',
+                                 'precio_paquetes'
+                             ])
+                             ->get() as $paquete) {
+                    $paquetes->push([
+                        'id' => $paquete->id,
+                        'titulo' => $paquete->titulo,
+                        'duracion' => $paquete->duracion,
+                        'url' => $paquete->url,
+                        'estado' => $paquete->estado,
+                        'offers_home' => $paquete->offers_home,
+                        'descuento' => $paquete->descuento,
+                        'categorias' => $paquete->categorias,
+                        'precio_paquetes' => $paquete->precio_paquetes,
+                        'destinos' => $paquete->destinos->map(function ($dest) {
+                            return [
+                                'id' => $dest->id,
+                                'codigo' => $dest->codigo,
+                                'nombre' => $dest->nombre,
+                                'url' => $dest->url,
+                            ];
+                        }),
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'pais' => [
+                    'id' => $pais->id,
+                    'codigo' => $pais->codigo,
+                    'nombre' => $pais->nombre,
+                    'url' => $pais->url
+                ],
+                'paquetes' => $paquetes->unique('titulo')->values()
+            ]);
         } catch (\Exception $th) {
             //throw $th;
             return $th;

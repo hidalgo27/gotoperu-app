@@ -48,5 +48,9 @@ class TDestino extends Model
         return $this->belongsToMany(TPaquete::class, 'tpaquetesdestinos', 'iddestinos', 'idpaquetes');
     }
 
+    public function teams()
+    {
+        return $this->belongsToMany(TTeam::class, 'tteams_destinos', 'iddestino', 'idteam');
+    }
 
 }

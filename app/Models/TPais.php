@@ -31,5 +31,9 @@ class TPais extends Model
         return $this->hasMany(TPaisPropiedades::class, 'idpais');
     }
 
+    public function teams()
+    {
+        return $this->belongsToMany(TTeam::class, 'tteams_pais', 'idpais', 'idteam');
+    }
 
 }
