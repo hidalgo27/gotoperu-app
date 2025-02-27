@@ -274,7 +274,8 @@ class PageController extends Controller
                 'tpaquetes.duracion',
                 'tpaquetes.estado',
                 'tpaquetes.offers_home',
-                'tpaquetes.descuento'
+                'tpaquetes.descuento',
+                'tpaquetes.imagen'
             )
                 ->with([
                     'categorias:id,nombre,url',
@@ -289,6 +290,7 @@ class PageController extends Controller
                         'estado' => $paquete->estado,
                         'offers_home' => $paquete->offers_home,
                         'descuento' => $paquete->descuento,
+                        'imagen' => $paquete->imagen,
                         'categorias' => $paquete->categorias,
                         'precio_paquetes' => $paquete->precio_paquetes,
                         'destinos' => $paquete->destinos->map(function ($dest) {
@@ -449,7 +451,8 @@ class PageController extends Controller
                 'tpaquetes.duracion',
                 'tpaquetes.estado',
                 'tpaquetes.offers_home',
-                'tpaquetes.descuento'
+                'tpaquetes.descuento',
+                'tpaquetes.imagen'
             )->with([
                 'categorias:id,nombre,url',
                 'destinos:id,codigo,nombre,url',
@@ -463,6 +466,7 @@ class PageController extends Controller
                     'estado' => $paquete->estado,
                     'offers_home' => $paquete->offers_home,
                     'descuento' => $paquete->descuento,
+                    'imagen' => $paquete->imagen,
                     'categorias' => $paquete->categorias,
                     'precio_paquetes' => $paquete->precio_paquetes,
                     'destinos' => $paquete->destinos->map(function ($dest) {
