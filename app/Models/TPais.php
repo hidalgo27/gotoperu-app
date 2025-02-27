@@ -36,4 +36,9 @@ class TPais extends Model
         return $this->belongsToMany(TTeam::class, 'tteams_pais', 'idpais', 'idteam');
     }
 
+    public function posts()
+    {
+        return $this->belongsToMany(TBlog_post::class, 'posts_pais', 'pais_id', 'post_id');
+    }
+
 }

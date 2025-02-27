@@ -53,4 +53,9 @@ class TDestino extends Model
         return $this->belongsToMany(TTeam::class, 'tteams_destinos', 'iddestino', 'idteam');
     }
 
+    public function posts()
+    {
+        return $this->belongsToMany(TBlog_post::class, 'posts_destinos', 'destino_id', 'post_id');
+    }
+
 }

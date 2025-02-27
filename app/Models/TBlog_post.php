@@ -20,4 +20,15 @@ class TBlog_post extends Model
     {
         return $this->hasMany(TBlog_imagen::class,'post_id');
     }
+
+    public function destinos()
+    {
+        return $this->belongsToMany(TDestino::class, 'posts_destinos', 'post_id', 'destino_id');
+    }
+
+    public function paises()
+    {
+        return $this->belongsToMany(TPais::class, 'posts_pais', 'post_id', 'pais_id');
+    }
+
 }

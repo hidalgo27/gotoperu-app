@@ -256,7 +256,7 @@ class PageController extends Controller
 //                ->get();
 //            return response()->json($paquetes_api, 200);
 
-            $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt'])
+            $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt','posts:id,titulo,url,imagen_miniatura,categoria_id'])
                 ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle','idpais')
                 ->find($destinos->id);
 
@@ -318,7 +318,8 @@ class PageController extends Controller
                     'wimage' => $destino->wimage,
                     'pais' => $destino->pais,
                     'imagenes' => $destino->imagenes,
-                    'paquetes' => $paquetes
+                    'paquetes' => $paquetes,
+                    'posts' => $destino->posts
                 ]
             ]);
 
@@ -426,7 +427,7 @@ class PageController extends Controller
 
         $pais = TPais::with([
             'destino' => function ($query) {
-                $query->select('id', 'idpais', 'codigo', 'nombre','url','imagen')->with('imagenes:id,iddestinos,nombre,alt');
+                $query->select('id', 'idpais', 'codigo', 'nombre','url','imagen')->with('imagenes:id,iddestinos,nombre,alt','posts:id,titulo,url,imagen_miniatura,categoria_id');
             },
             'propiedades:id,idpais,nombre,descripcion,imagen'
         ])->find($country->id);
@@ -492,7 +493,8 @@ class PageController extends Controller
                 'capital' => $pais->capital,
                 'propiedades' => $pais->propiedades,
                 'destinos' => $pais->destino,
-                'paquetes' => $paquetes->unique('titulo')->values()
+                'paquetes' => $paquetes->unique('titulo')->values(),
+                'posts' => $pais->posts
             ]
         ]);
 
