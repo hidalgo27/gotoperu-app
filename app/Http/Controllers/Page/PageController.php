@@ -139,11 +139,32 @@ class PageController extends Controller
 //            return response()->json($team);
 
             $team = TTeam::with([
-                'destinos:id,codigo,nombre,url,imagen',
+                'destinos' => function ($query) {
+                    $query->select(
+                        'tdestinos.id',  // Se especifica la tabla
+                        'tdestinos.codigo',
+                        'tdestinos.nombre',
+                        'tdestinos.url',
+                        'tdestinos.imagen',
+                        'tdestinos.idpais'
+                    )->with([
+                        'pais:id,codigo,nombre,url,imagen' // Se mantiene la relación del país
+                    ]);
+                },
                 'paises:id,codigo,nombre,url,imagen'
             ])->select(
-                'id', 'nombre', 'actividad', 'cargo', 'frase', 'email', 'descripcion',
-                'fun_facts', 'favorite_quote', 'favorite_travel_memory', 'imagen_perfil', 'imagen_portada'
+                'tteam.id',  // Se especifica la tabla para evitar ambigüedades
+                'tteam.nombre',
+                'tteam.actividad',
+                'tteam.cargo',
+                'tteam.frase',
+                'tteam.email',
+                'tteam.descripcion',
+                'tteam.fun_facts',
+                'tteam.favorite_quote',
+                'tteam.favorite_travel_memory',
+                'tteam.imagen_perfil',
+                'tteam.imagen_portada'
             )->find($team->id);
 
             if (!$team) {
@@ -166,7 +187,16 @@ class PageController extends Controller
                     'favorite_travel_memory' => $team->favorite_travel_memory,
                     'imagen_perfil' => $team->imagen_perfil,
                     'imagen_portada' => $team->imagen_portada,
-                    'destinos' => $team->destinos,
+                    'destinos' => $team->destinos->map(function ($destino) {
+                        return [
+                            'id' => $destino->id,
+                            'codigo' => $destino->codigo,
+                            'nombre' => $destino->nombre,
+                            'url' => $destino->url,
+                            'imagen' => $destino->imagen,
+                            'pais' => $destino->pais // Aquí se agrega el país dentro del destino
+                        ];
+                    }),
                     'paises' => $team->paises
                 ]
             ]);
