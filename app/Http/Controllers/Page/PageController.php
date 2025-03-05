@@ -235,7 +235,7 @@ class PageController extends Controller
     {
         // Obtener el país con sus equipos
         $pais = TPais::with('teams:id,nombre,actividad,cargo,frase,email,descripcion,fun_facts,favorite_quote,favorite_travel_memory,imagen_perfil,imagen_portada')
-            ->select('id', 'codigo', 'nombre', 'url')
+            ->select('id', 'codigo', 'nombre', 'url','imagen')
             ->find($country->id);
 
         if (!$pais) {
@@ -250,6 +250,7 @@ class PageController extends Controller
                 'codigo' => $pais->codigo,
                 'nombre' => $pais->nombre,
                 'url' => $pais->url,
+                'imagen' => $pais->imagen,
                 'teams' => $pais->teams
             ]
         ]);
