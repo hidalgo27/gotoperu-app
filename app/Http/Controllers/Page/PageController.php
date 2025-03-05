@@ -344,7 +344,7 @@ class PageController extends Controller
                     'titulo' => $destino->titulo,
                     'resumen' => $destino->resumen,
                     'descripcion' => $destino->descripcion,
-                    'imagen' => $destino->descripcion,
+                    'imagen' => $destino->imagen,
                     'wtitle' => $destino->wtitle,
                     'wtext' => $destino->wtext,
                     'wimage' => $destino->wimage,
