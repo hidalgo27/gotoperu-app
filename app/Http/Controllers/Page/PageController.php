@@ -286,7 +286,7 @@ class PageController extends Controller
 //                ->get();
 //            return response()->json($paquetes_api, 200);
 
-            $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt','posts:id,titulo,url,imagen_miniatura,categoria_id'])
+            $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt','posts:id,titulo,url,estado,imagen_miniatura,categoria_id'])
                 ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle','idpais','longitud','latitud')
                 ->find($destinos->id);
 
