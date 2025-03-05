@@ -605,7 +605,8 @@ class PageController extends Controller
                     'id' => $pais->id,
                     'codigo' => $pais->codigo,
                     'nombre' => $pais->nombre,
-                    'url' => $pais->url
+                    'url' => $pais->url,
+                    'imagen' => $pais->imagen
                 ],
                 'paquetes' => $paquetes->unique('titulo')->values()
             ]);
