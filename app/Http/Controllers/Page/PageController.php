@@ -64,7 +64,7 @@ class PageController extends Controller
 
     public function packages_detail($latam,$url) {
         try {
-            $paquetes = TPaquete::with('paquete_itinerario.itinerarios', 'paquetes_destinos.destinos.pais','paquetes_categoria.categoria','paquetes_destinos.destinos.destino_imagen', 'precio_paquetes', 'imagen_paquetes')->where('url', $url)->get();
+            $paquetes = TPaquete::with('paquete_itinerario.itinerarios.itinerario_imagen', 'paquetes_destinos.destinos.pais','paquetes_categoria.categoria','paquetes_destinos.destinos.destino_imagen', 'precio_paquetes', 'imagen_paquetes')->where('url', $url)->get();
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
