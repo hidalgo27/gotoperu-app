@@ -75,7 +75,7 @@ class PageController extends Controller
 
     public function hotels_destinations() {
         try {
-            $hoteles = THotel::with('hotel_destinos.destinos')->get();
+            $hoteles = THotel::with('hotel_destinos.destinos','imagenes')->get();
             return response()->json($hoteles, 200);
         } catch (\Exception $th) {
             //throw $th;
