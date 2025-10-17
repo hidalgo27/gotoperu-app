@@ -46,7 +46,9 @@ Route::get('categorias/{categoria}', [PageController::class, 'categories_show'])
 Route::get('categorias/{pais}/{categoria}', [PageController::class, 'packages_by_country_and_category'])->name('category.pais.show');
 
 // routes/web.php o api.php
-Route::get('/countries/{pais:url}/categories', [PageController::class, 'country_categories_show'])->name('category.pais');;
+
+Route::get('/countries/{pais:url}/categories', [PageController::class, 'categoriesByCountry'])->name('category.pais');
+Route::get('/countries/{pais:url}/categories/{categoria:url}/packages', [PageController::class, 'packagesByCountryAndCategory'])->name('category.pais.slug');;;
 
 
 Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');

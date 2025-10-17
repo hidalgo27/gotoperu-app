@@ -450,39 +450,170 @@ class PageController extends Controller
 
     }
 
-    public function packages_by_country_and_category(TPais $pais, TCategoria $categoria)
+    public function categoriesByCountry(TPais $pais, Request $request)
     {
-        $pais = TPais::with('destino.paquetes.categorias')->find($pais->id);
+        // Campos base seguros en tcategoria
+        $categoryColumns = [
+            'tcategoria.id',
+            'tcategoria.nombre',
+            'tcategoria.url',
+            'tcategoria.imagen',
+            'tcategoria.resumen',
+            'tcategoria.estado',
+            'tcategoria.orden_block',
+        ];
 
-        if (!$pais) {
-            return response()->json([
-                'error' => 'País no encontrado'
-            ], 404);
-        }
+        // Si existieran en tu BD actual:
+        // $categoryColumns[] = 'tcategoria.titulo';
+        // $categoryColumns[] = 'tcategoria.titulo_2';
 
-        $categoria = TCategoria::find($categoria->id);
+        $categorias = $pais->categorias()
+            ->select($categoryColumns)
+            ->orderBy('tcategoria.orden_block')
+            ->get()
+            ->map(function ($cat) {
+                return [
+                    'id'      => $cat->id,
+                    'nombre'  => $cat->nombre,
+                    // 'titulo'  => $cat->titulo ?? $cat->titulo_2 ?? null, // si los tienes
+                    'url'     => $cat->url,
+                    'imagen'  => $cat->imagen,
+                    'resumen' => $cat->resumen,
+                    'estado'  => $cat->estado,
+                ];
+            });
 
-        if (!$categoria) {
-            return response()->json([
-                'error' => 'Categoría no encontrada'
-            ], 404);
-        }
-
-        // Filtrar los paquetes que pertenecen al país y la categoría
-        $paquetes = collect();
-        foreach ($pais->destino as $destino) {
-            foreach ($destino->paquetes as $paquete) {
-                if ($paquete->categorias->contains('id', $categoria->id)) {
-                    $paquetes->push($paquete);
-                }
-            }
-        }
+        $paisBasic = TPais::select(
+            'id', 'codigo', 'nombre', 'url',
+            'population', 'languages', 'currency_name', 'currency_code', 'capital',
+            'imagen', 'titulo', 'title'
+        )->find($pais->id);
 
         return response()->json([
-            'pais' => $pais->nombre,
-            'categoria' => $categoria->nombre,
-            'paquetes' => $paquetes->unique('id')->values()
+            'pais' => $paisBasic,
+            'categorias' => $categorias,
         ]);
+    }
+    public function packagesByCountryAndCategory(TPais $pais, TCategoria $categoria, Request $request)
+    {
+        // Verifica que la categoría pertenezca al país (tpais_categoria)
+        $belongs = $pais->categorias()->where('tcategoria.id', $categoria->id)->exists();
+        if (!$belongs) {
+            return response()->json([
+                'error' => 'La categoría no pertenece al país indicado.'
+            ], 404);
+        }
+
+        // Opcionales de filtro/paginación
+        $onlyActive = (int) $request->get('only_active', 1);   // 1 = solo estado=1
+        $perPage    = (int) $request->get('per_page', 0);      // 0 = sin paginación
+        $orderBy    = $request->get('order_by', 'tpaquetes.id');
+        $orderDir   = $request->get('order_dir', 'desc');
+
+        // Construye la base de paquetes de esta categoría
+        $packagesQuery = $categoria->paquetes()
+            ->select(
+                'tpaquetes.id',
+                'tpaquetes.titulo',
+                'tpaquetes.url',
+                'tpaquetes.duracion',
+                'tpaquetes.estado',
+                'tpaquetes.offers_home',
+                'tpaquetes.descuento',
+                'tpaquetes.imagen'
+            )
+            ->with([
+                'categorias:id,nombre,url',
+                'destinos:id,codigo,nombre,url',
+                'precio_paquetes'
+            ])
+            ->orderBy($orderBy, $orderDir);
+
+        // Activos opcionalmente
+        if ($onlyActive === 1) {
+            $packagesQuery->where('tpaquetes.estado', 1);
+        }
+
+        // (Opcional) Si quisieras restringir a paquetes que además tengan destinos del mismo país:
+        // $packagesQuery->whereHas('destinos', function ($q) use ($pais) {
+        //     $q->where('idpais', $pais->id);
+        // });
+
+        // Paginación opcional
+        if ($perPage > 0) {
+            $paquetes = $packagesQuery->paginate($perPage);
+            $paquetes->getCollection()->transform(function ($p) {
+                return $this->mapPackage($p);
+            });
+
+            $categoriaBasic = [
+                'id'      => $categoria->id,
+                'nombre'  => $categoria->nombre,
+                // 'titulo'  => $categoria->titulo ?? $categoria->titulo_2 ?? null,
+                'url'     => $categoria->url,
+                'imagen'  => $categoria->imagen,
+                'resumen' => $categoria->resumen,
+                'estado'  => $categoria->estado,
+            ];
+
+            $paisBasic = TPais::select(
+                'id','codigo','nombre','url','population','languages','currency_name','currency_code','capital',
+                'imagen','titulo','title'
+            )->find($pais->id);
+
+            return response()->json([
+                'pais'      => $paisBasic,
+                'categoria' => $categoriaBasic,
+                'paquetes'  => $paquetes, // incluye meta de paginación
+            ]);
+        }
+
+        // Sin paginación
+        $paquetes = $packagesQuery->get()->map(function ($p) {
+            return $this->mapPackage($p);
+        });
+
+        $categoriaBasic = [
+            'id'      => $categoria->id,
+            'nombre'  => $categoria->nombre,
+            // 'titulo'  => $categoria->titulo ?? $categoria->titulo_2 ?? null,
+            'url'     => $categoria->url,
+            'imagen'  => $categoria->imagen,
+            'resumen' => $categoria->resumen,
+            'estado'  => $categoria->estado,
+        ];
+
+        $paisBasic = TPais::select(
+            'id','codigo','nombre','url','population','languages','currency_name','currency_code','capital',
+            'imagen','titulo','title'
+        )->find($pais->id);
+
+        return response()->json([
+            'pais'      => $paisBasic,
+            'categoria' => $categoriaBasic,
+            'paquetes'  => $paquetes,
+        ]);
+    }
+
+    private function mapPackage($p): array
+    {
+        return [
+            'id'            => $p->id,
+            'titulo'        => $p->titulo,
+            'duracion'      => $p->duracion,
+            'url'           => $p->url,
+            'estado'        => $p->estado,
+            'offers_home'   => $p->offers_home,
+            'descuento'     => $p->descuento,
+            'imagen'        => $p->imagen,
+            'categorias'    => $p->categorias->map(fn($c) => [
+                'id' => $c->id, 'nombre' => $c->nombre, 'url' => $c->url
+            ]),
+            'destinos'      => $p->destinos->map(fn($d) => [
+                'id' => $d->id, 'codigo' => $d->codigo, 'nombre' => $d->nombre, 'url' => $d->url
+            ]),
+            'precio_paquetes' => $p->precio_paquetes, // tal como ya usas
+        ];
     }
 
     public function packages_by_country(TPais $pais)
