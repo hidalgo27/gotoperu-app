@@ -579,6 +579,7 @@ class PageController extends Controller
             // 'titulo'  => $categoria->titulo ?? $categoria->titulo_2 ?? null,
             'url'     => $categoria->url,
             'imagen'  => $categoria->imagen,
+            'imagen_banner'  => $categoria->imagen_banner,
             'resumen' => $categoria->resumen,
             'estado'  => $categoria->estado,
         ];
