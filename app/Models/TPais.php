@@ -41,4 +41,15 @@ class TPais extends Model
         return $this->belongsToMany(TBlog_post::class, 'posts_pais', 'pais_id', 'post_id');
     }
 
+    // App/Models/TPais.php
+    public function categorias()
+    {
+        return $this->belongsToMany(
+            TCategoria::class,
+            'tpais_categoria',
+            'pais_id',
+            'categoria_id'
+        )->withTimestamps();
+    }
+
 }

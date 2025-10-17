@@ -45,6 +45,10 @@ Route::get('categorias', [PageController::class, 'category'])->name('category');
 Route::get('categorias/{categoria}', [PageController::class, 'categories_show'])->name('category.show.show');
 Route::get('categorias/{pais}/{categoria}', [PageController::class, 'packages_by_country_and_category'])->name('category.pais.show');
 
+// routes/web.php o api.php
+Route::get('/countries/{pais:url}/categories', [PageController::class, 'country_categories_show'])->name('category.pais');;
+
+
 Route::post('/formulario-diseno', [PageController::class, 'formulario_diseno'])->name('formulario_diseno');
 
 Route::get('blog', [PageController::class, 'blog'])->name('blog');

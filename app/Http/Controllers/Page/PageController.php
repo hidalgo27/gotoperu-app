@@ -279,14 +279,7 @@ class PageController extends Controller
     }
 
     public function destinations_show(TPais $pais, TDestino $destinos){
-
         try {
-//            $paquetes_api = TPaqueteDestino::
-//            with('paquetes.precio_paquetes','destinos', 'paquetes.paquetes_destinos.destinos','paquetes.paquetes_categoria.categoria')
-//                ->where('iddestinos', $destinos->id)
-//                ->get();
-//            return response()->json($paquetes_api, 200);
-
             $destino = TDestino::with(['pais:id,codigo,nombre,url,population,languages,currency_name,currency_code,capital','imagenes:id,iddestinos,nombre,alt','posts:id,titulo,url,estado,imagen_miniatura,categoria_id'])
                 ->select('id', 'codigo', 'nombre', 'url','titulo','resumen','descripcion','imagen','wtext','wimage','wtitle','idpais','longitud','latitud')
                 ->find($destinos->id);
@@ -363,6 +356,86 @@ class PageController extends Controller
             return $th;
         }
 
+    }
+
+    public function country_categories_show(TPais $pais)
+    {
+        try {
+            // Cargar categorías del país + sus paquetes
+            $categorias = $pais->categorias()
+                ->select('tcategoria.id', 'tcategoria.nombre', 'tcategoria.titulo', 'tcategoria.url',
+                    'tcategoria.imagen', 'tcategoria.resumen', 'tcategoria.estado', 'tcategoria.orden_block')
+                ->with(['paquetes' => function ($q) {
+                    $q->select(
+                        'tpaquetes.id',
+                        'tpaquetes.titulo',
+                        'tpaquetes.url',
+                        'tpaquetes.duracion',
+                        'tpaquetes.estado',
+                        'tpaquetes.offers_home',
+                        'tpaquetes.descuento',
+                        'tpaquetes.imagen'
+                    )
+                        // (Opcional) solo paquetes activos
+                        ->where('tpaquetes.estado', 1)
+                        ->with([
+                            // Ya tienes estas relaciones en TPaquete
+                            'categorias:id,nombre,url',
+                            'destinos:id,codigo,nombre,url',
+                            'precio_paquetes',
+                        ]);
+                }])
+                // (Opcional) ordenar categorías como las muestras en tu web
+                ->orderBy('tcategoria.orden_block')
+                ->get()
+                ->map(function ($cat) {
+                    return [
+                        'id'       => $cat->id,
+                        'nombre'   => $cat->nombre,
+                        'titulo'   => $cat->titulo,
+                        'url'      => $cat->url,
+                        'imagen'   => $cat->imagen,
+                        'resumen'  => $cat->resumen,
+                        'estado'   => $cat->estado,
+                        'paquetes' => $cat->paquetes->map(function ($p) {
+                            return [
+                                'id'            => $p->id,
+                                'titulo'        => $p->titulo,
+                                'duracion'      => $p->duracion,
+                                'url'           => $p->url,
+                                'estado'        => $p->estado,
+                                'offers_home'   => $p->offers_home,
+                                'descuento'     => $p->descuento,
+                                'imagen'        => $p->imagen,
+                                'categorias'    => $p->categorias->map(fn($c) => [
+                                    'id' => $c->id, 'nombre' => $c->nombre, 'url' => $c->url
+                                ]),
+                                'destinos'      => $p->destinos->map(fn($d) => [
+                                    'id' => $d->id, 'codigo' => $d->codigo, 'nombre' => $d->nombre, 'url' => $d->url
+                                ]),
+                                'precio_paquetes' => $p->precio_paquetes, // ya te llega como antes
+                            ];
+                        }),
+                    ];
+                });
+
+            // Puedes seleccionar solo lo que necesitas del país
+            $paisBasic = TPais::select(
+                'id', 'codigo', 'nombre', 'url',
+                'population', 'languages', 'currency_name', 'currency_code', 'capital',
+                'imagen', 'titulo', 'title'
+            )->find($pais->id);
+
+            return response()->json([
+                'pais' => $paisBasic,
+                'categorias' => $categorias
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'error' => 'Error al obtener categorías por país',
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     public function categories_show(TCategoria $categoria){

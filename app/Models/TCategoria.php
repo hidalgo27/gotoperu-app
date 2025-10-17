@@ -24,4 +24,16 @@ class TCategoria extends Model
     {
         return $this->belongsToMany(TPaquete::class, 'tpaquetescategoria', 'idcategoria', 'idpaquetes');
     }
+
+    // App/Models/TCategoria.php
+    public function paises()
+    {
+        return $this->belongsToMany(
+            TPais::class,
+            'tpais_categoria',
+            'categoria_id',
+            'pais_id'
+        )->withTimestamps();
+    }
+
 }
