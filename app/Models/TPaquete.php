@@ -87,10 +87,8 @@ class TPaquete extends Model
     {
         return $this->hasMany(TPaqueteSalida::class, 'idpaquetes')
             ->where('status', 1)
-            ->whereDate('departure_date', '>=', date('Y-m-d'))
             ->orderBy('departure_date');
     }
-
 
     protected $appends = [
         'fixed_departures',
