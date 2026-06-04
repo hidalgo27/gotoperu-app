@@ -1,5 +1,5 @@
 <?php
-
+// gotoperu-app/app/Http/Controllers/Page/PageController.php
 namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
@@ -27,7 +27,14 @@ class PageController extends Controller
     public function packages(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'imagen_paquetes', 'paquetes_categoria.categoria')->get();
+            with(
+                'paquetes_destinos.destinos.pais',
+                'precio_paquetes',
+                'imagen_paquetes',
+                'paquetes_categoria.categoria',
+                'salidas_activas'
+            )->get();
+
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -38,9 +45,15 @@ class PageController extends Controller
     public function packages_top(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'paquetes_categoria.categoria')
+            with(
+                'paquetes_destinos.destinos.pais',
+                'precio_paquetes',
+                'paquetes_categoria.categoria',
+                'salidas_activas'
+            )
                 ->where('estado', '1')
                 ->get();
+
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;
@@ -51,9 +64,15 @@ class PageController extends Controller
     public function packages_offers(){
         try {
             $paquetes = TPaquete::
-            with('paquetes_destinos.destinos.pais', 'precio_paquetes', 'paquetes_categoria.categoria')
+            with(
+                'paquetes_destinos.destinos.pais',
+                'precio_paquetes',
+                'paquetes_categoria.categoria',
+                'salidas_activas'
+            )
                 ->where('offers_home', '1')
                 ->get();
+
             return response()->json($paquetes, 200);
         } catch (\Exception $th) {
             //throw $th;

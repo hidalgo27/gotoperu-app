@@ -1,4 +1,5 @@
 <?php
+// gotoperu-app/app/Models/TPaquete.php
 
 namespace App\Models;
 
@@ -74,6 +75,54 @@ class TPaquete extends Model
     public function destinos()
     {
         return $this->belongsToMany(TDestino::class, 'tpaquetesdestinos', 'idpaquetes', 'iddestinos');
+    }
+
+    public function salidas()
+    {
+        return $this->hasMany(TPaqueteSalida::class, 'idpaquetes')
+            ->orderBy('departure_date');
+    }
+
+    public function salidas_activas()
+    {
+        return $this->hasMany(TPaqueteSalida::class, 'idpaquetes')
+            ->where('status', 1)
+            ->whereDate('departure_date', '>=', date('Y-m-d'))
+            ->orderBy('departure_date');
+    }
+
+
+    protected $appends = [
+        'fixed_departures',
+        'departures',
+    ];
+
+    public function getFixedDeparturesAttribute()
+    {
+        if (!$this->relationLoaded('salidas_activas')) {
+            return [];
+        }
+
+        return $this->salidas_activas
+            ->pluck('departure_date')
+            ->map(function ($date) {
+                return \Carbon\Carbon::parse($date)->format('Y-m-d');
+            })
+            ->values();
+    }
+
+    public function getDeparturesAttribute()
+    {
+        if (!$this->relationLoaded('salidas_activas')) {
+            return [];
+        }
+
+        return $this->salidas_activas
+            ->pluck('departure_date')
+            ->map(function ($date) {
+                return \Carbon\Carbon::parse($date)->format('M j');
+            })
+            ->values();
     }
 
 }
