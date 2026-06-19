@@ -24,23 +24,53 @@ use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
-    public function packages(){
+    public function packages()
+    {
         try {
-            $paquetes = TPaquete::
-            with(
+            $paquetes = TPaquete::with([
                 'paquetes_destinos.destinos.pais',
                 'precio_paquetes',
                 'imagen_paquetes',
                 'paquetes_categoria.categoria',
-                'salidas_activas'
-            )->get();
+                'salidas_activas',
+            ])
+                ->where(function ($query) {
+                    $query
+                        ->where('is_p_t', 1)
+                        ->orWhereNull('is_p_t')
+                        ->orWhere('is_p_t', '');
+                })
+                ->get();
 
             return response()->json($paquetes, 200);
-        } catch (\Exception $th) {
-            //throw $th;
-            return $th;
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error al obtener los paquetes.',
+                'error' => $th->getMessage(),
+            ], 500);
         }
+    }
 
+    public function tours()
+    {
+        try {
+            $tours = TPaquete::with([
+                'paquetes_destinos.destinos.pais',
+                'precio_paquetes',
+                'imagen_paquetes',
+                'paquetes_categoria.categoria',
+                'salidas_activas',
+            ])
+                ->where('is_p_t', 0)
+                ->get();
+
+            return response()->json($tours, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error al obtener los tours.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
     public function packages_top(){
         try {

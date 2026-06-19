@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('packages', [PageController::class, 'packages'])->name('package');
+Route::get('tours', [PageController::class, 'tours'])->name('tour');
+
 Route::get('packages-top', [PageController::class, 'packages_top'])->name('package.top');
 Route::get('packages-offers', [PageController::class, 'packages_offers'])->name('package.offers');
 Route::get('packages-offers/{country}', [PageController::class, 'offers_country'])->name('package.offers.country');
