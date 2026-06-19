@@ -35,8 +35,7 @@ class PageController extends Controller
                 'salidas_activas',
             ])
                 ->where(function ($query) {
-                    $query
-                        ->where('is_p_t', 1)
+                    $query->where('is_p_t', 1)
                         ->orWhereNull('is_p_t')
                         ->orWhere('is_p_t', '');
                 })
