@@ -36,7 +36,7 @@ class PageController extends Controller
             ])
                 ->where(function ($query) {
                     $query->where('is_p_t', 1)
-                        ;
+                        ->orWhereNull('is_p_t');
                 })
                 ->get();
 
