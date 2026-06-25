@@ -1,5 +1,6 @@
 <?php
 // gotoperu-app/routes/api.php
+use App\Http\Controllers\Page\NavigationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Page\PageController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\Page\PageController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/navigation', [NavigationController::class, 'index',])->name('navigation.index');
 
 Route::get('packages', [PageController::class, 'packages'])->name('package');
 Route::get('tours', [PageController::class, 'tours'])->name('tour');
