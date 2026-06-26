@@ -323,15 +323,23 @@ class PageController extends Controller
 
     }
 
-    public function destinations(TPais $pais){
+    public function destinations(TPais $pais)
+    {
         try {
-            $destinations = TDestino::where('idpais',$pais->id)->get();
-            return response()->json($destinations, 200);
-        } catch (\Exception $th) {
-            //throw $th;
-            return $th;
-        }
+            $destinations = TDestino::query()
+                ->with([
+                    'imagenes:id,iddestinos,nombre,alt',
+                ])
+                ->where('idpais', $pais->id)
+                ->get();
 
+            return response()->json($destinations, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error al obtener los destinos.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
     public function destinations_show(TPais $pais, TDestino $destinos){
