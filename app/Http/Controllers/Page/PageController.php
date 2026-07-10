@@ -93,13 +93,21 @@ class PageController extends Controller
             ], 500);
         }
     }
-    // gotoperu-app/app/Http/Controllers/Page/PageController.php
 
     public function packages_top(Request $request)
     {
         try {
             $limit = (int) $request->query('limit', 12);
             $limit = max(1, min($limit, 50));
+
+            $excludedCategories = collect(
+                explode(',', (string) $request->query('exclude_categories', ''))
+            )
+                ->map(fn (string $category) => trim(strtolower($category)))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
 
             $paquetes = TPaquete::query()
                 ->with([
@@ -114,13 +122,18 @@ class PageController extends Controller
                     $query
                         ->where('is_p_t', 1);
                 })
-                ->whereDoesntHave(
-                    'paquetes_categoria.categoria',
-                    function ($query) {
-                        $query->whereIn('url', [
-                            'multicountry',
-                            'luxury',
-                        ]);
+                ->when(
+                    !empty($excludedCategories),
+                    function ($query) use ($excludedCategories) {
+                        $query->whereDoesntHave(
+                            'paquetes_categoria.categoria',
+                            function ($categoryQuery) use ($excludedCategories) {
+                                $categoryQuery->whereIn(
+                                    'url',
+                                    $excludedCategories
+                                );
+                            }
+                        );
                     }
                 )
                 ->orderByDesc('id')
@@ -133,7 +146,9 @@ class PageController extends Controller
 
             return response()->json([
                 'message' => 'Error al obtener packages-top.',
-                'error' => $th->getMessage(),
+                'error' => config('app.debug')
+                    ? $th->getMessage()
+                    : 'Internal Server Error',
             ], 500);
         }
     }
