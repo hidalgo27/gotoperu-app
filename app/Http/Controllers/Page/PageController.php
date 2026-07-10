@@ -70,6 +70,7 @@ class PageController extends Controller
             ], 500);
         }
     }
+
     public function tours_active()
     {
         try {
@@ -91,6 +92,25 @@ class PageController extends Controller
                 'error' => $th->getMessage(),
             ], 500);
         }
+    }
+    public function packages_top(){
+        try {
+            $paquetes = TPaquete::
+            with(
+                'paquetes_destinos.destinos.pais',
+                'precio_paquetes',
+                'paquetes_categoria.categoria',
+                'salidas_activas'
+            )
+                ->where('estado', '1')
+                ->get();
+
+            return response()->json($paquetes, 200);
+        } catch (\Exception $th) {
+            //throw $th;
+            return $th;
+        }
+
     }
     public function packages_offers(){
         try {
