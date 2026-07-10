@@ -594,9 +594,9 @@ class PageController extends Controller
             ->orderBy($orderBy, $orderDir);
 
         // Activos opcionalmente
-//        if ($onlyActive === 1) {
-//            $packagesQuery->where('tpaquetes.estado', 1);
-//        }
+        if ($onlyActive === 1) {
+            $packagesQuery->where('tpaquetes.estado', 1);
+        }
 
         // (Opcional) Si quisieras restringir a paquetes que además tengan destinos del mismo país:
         // $packagesQuery->whereHas('destinos', function ($q) use ($pais) {
