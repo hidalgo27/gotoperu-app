@@ -93,24 +93,49 @@ class PageController extends Controller
             ], 500);
         }
     }
-    public function packages_top(){
+    // gotoperu-app/app/Http/Controllers/Page/PageController.php
+
+    public function packages_top(Request $request)
+    {
         try {
-            $paquetes = TPaquete::
-            with(
-                'paquetes_destinos.destinos.pais',
-                'precio_paquetes',
-                'paquetes_categoria.categoria',
-                'salidas_activas'
-            )
-                ->where('estado', '1')
+            $limit = (int) $request->query('limit', 12);
+            $limit = max(1, min($limit, 50));
+
+            $paquetes = TPaquete::query()
+                ->with([
+                    'paquetes_destinos.destinos.pais',
+                    'precio_paquetes',
+                    'imagen_paquetes',
+                    'paquetes_categoria.categoria',
+                    'salidas_activas',
+                ])
+                ->where('estado', 1)
+                ->where(function ($query) {
+                    $query
+                        ->where('is_p_t', 1);
+                })
+                ->whereDoesntHave(
+                    'paquetes_categoria.categoria',
+                    function ($query) {
+                        $query->whereIn('url', [
+                            'multicountry',
+                            'luxury',
+                        ]);
+                    }
+                )
+                ->orderByDesc('id')
+                ->limit($limit)
                 ->get();
 
             return response()->json($paquetes, 200);
-        } catch (\Exception $th) {
-            //throw $th;
-            return $th;
-        }
+        } catch (\Throwable $th) {
+            report($th);
 
+            return response()->json([
+                'message' => 'Error al obtener packages-top.',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
     public function packages_offers(){
         try {
