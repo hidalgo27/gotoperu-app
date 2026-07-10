@@ -24,6 +24,7 @@ Route::get('/navigation', [NavigationController::class, 'index',])->name('naviga
 
 Route::get('packages', [PageController::class, 'packages'])->name('package');
 Route::get('tours', [PageController::class, 'tours'])->name('tour');
+Route::get('tours-active', [PageController::class, 'tours_active'])->name('tour.active');
 
 Route::get('packages-top', [PageController::class, 'packages_top'])->name('package.top');
 Route::get('packages-offers', [PageController::class, 'packages_offers'])->name('package.offers');

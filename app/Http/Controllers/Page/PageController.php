@@ -70,24 +70,27 @@ class PageController extends Controller
             ], 500);
         }
     }
-    public function packages_top(){
+    public function tours_active()
+    {
         try {
-            $paquetes = TPaquete::
-            with(
+            $tours = TPaquete::with([
                 'paquetes_destinos.destinos.pais',
                 'precio_paquetes',
+                'imagen_paquetes',
                 'paquetes_categoria.categoria',
-                'salidas_activas'
-            )
-                ->where('estado', '1')
+                'salidas_activas',
+            ])
+                ->where('is_p_t', 0)
+                ->where('estado', 1)
                 ->get();
 
-            return response()->json($paquetes, 200);
-        } catch (\Exception $th) {
-            //throw $th;
-            return $th;
+            return response()->json($tours, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error al obtener los tours activos.',
+                'error' => $th->getMessage(),
+            ], 500);
         }
-
     }
     public function packages_offers(){
         try {
